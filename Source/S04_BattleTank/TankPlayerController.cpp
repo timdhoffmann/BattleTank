@@ -10,7 +10,7 @@ void ATankPlayerController::BeginPlay()
 
 	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found.")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Controlled tank = %s"), *(ControlledTank->GetName()));
+		UE_LOG(LogTemp, Warning, TEXT("Player controlled tank: %s"), *(ControlledTank->GetName()));
 	}
 }
 
