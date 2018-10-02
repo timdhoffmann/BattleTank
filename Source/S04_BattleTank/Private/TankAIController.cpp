@@ -6,13 +6,12 @@
 void ATankAIController::BeginPlay()
 {
 	auto ControlledTank = GetControlledPawn();
-	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found.")))
+	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled pawn found.")))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("AI controlled tank: %s"), *(ControlledTank->GetName()));
 	}
 
 	auto PlayerTank = GetPlayerPawn();
-	if (ensureMsgf(PlayerTank != nullptr, TEXT("No player tank found.")))
+	if (ensureMsgf(PlayerTank != nullptr, TEXT("No player pawn found.")))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[%s] found player controlled pawn [%s]"), *(ControlledTank->GetName()), *(PlayerTank->GetName()));
 	}
