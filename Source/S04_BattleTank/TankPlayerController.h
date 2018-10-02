@@ -18,14 +18,12 @@ class S04_BATTLETANK_API ATankPlayerController : public APlayerController
 public:
 	/// Functions:
 	// Called when the game starts.
-	void BeginPlay() override;
+	virtual void BeginPlay() override;
 	
 	// Called every frame to update this actor.
-    void Tick(float DeltaSeconds) override;
+    virtual void Tick(float DeltaSeconds) override;
 	
 private:
-	/// Variables.
-
 	/// Functions.
 	ATank* GetControlledPawn() const;
 };
