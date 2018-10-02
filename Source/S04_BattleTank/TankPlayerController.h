@@ -29,7 +29,7 @@ private:
 	/// Functions.
 	ATank* GetControlledPawn() const;
 
-	bool GetHitLocation(FVector OutHitLocation) const;
+	bool GetHitLocation(FVector& OutHitLocation) const;
 
 	// Gets the start of the line trace.
 	FVector GetLineTraceStart() const;

@@ -31,7 +31,7 @@ void ATankPlayerController::AimAtCrosshair() const
 		return;
 	}
 
-	auto OutHitLocation = FVector(0.0f, 0.0f, 0.0f); // Out parameter.
+	FVector OutHitLocation = FVector(0.0f, 0.0f, 0.0f); // Out parameter.
 	// Get world location from line trace through crosshair.
 	if (GetHitLocation(OutHitLocation))
 	{
@@ -49,7 +49,7 @@ ATank* ATankPlayerController::GetControlledPawn() const
 	return Cast<ATank>(GetPawn());
 }
 
-bool ATankPlayerController::GetHitLocation(FVector OutHitLocation) const
+bool ATankPlayerController::GetHitLocation(FVector& OutHitLocation) const
 {
 	/// Set up parameters used for the LineTrace.
 	FHitResult OutHitResult;
@@ -62,14 +62,19 @@ bool ATankPlayerController::GetHitLocation(FVector OutHitLocation) const
 	);
 
 	// Execute LineTrace (Ray-cast).
-	return GetWorld()->LineTraceSingleByObjectType
+	
+	if 
 	(
-		OutHitResult, 
-		GetLineTraceStart(), 
-		GetLineTraceEnd(), 
-		ObjectTypesLookedFor, 
-		AdditionalTraceParameters
-	);
+		GetWorld()->LineTraceSingleByObjectType
+		(
+			OutHitResult, GetLineTraceStart(), GetLineTraceEnd(), ObjectTypesLookedFor, AdditionalTraceParameters
+		)
+	)
+	{
+		OutHitLocation = OutHitResult.ImpactPoint;
+		return true;
+	}
+	return false;
 }
 
 FVector ATankPlayerController::GetLineTraceStart() const
