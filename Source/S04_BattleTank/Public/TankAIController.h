@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "AIController.h"
+#include "Engine/World.h"
 #include "Tank.h"
 #include "TankAIController.generated.h"
 
@@ -14,13 +16,17 @@ UCLASS()
 class S04_BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
-	
-private:
-	/// Functions.
 
+public:
+	/// Functions:
 	// Called when the game starts.
 	void BeginPlay() override;
-
+	
+private:
+	/// Functions:
 	// Gets the tank, this controller is controlling.
-	ATank* GetControlledTank() const;
+	ATank* GetControlledPawn() const;
+
+	// Gets the tank controlled by the player.
+	ATank* GetPlayerPawn() const;
 };
