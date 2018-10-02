@@ -14,11 +14,18 @@ UCLASS()
 class S04_BATTLETANK_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
+public:
+	/// Functions:
+	// Called when the game starts.
+	void BeginPlay() override;
+	
+	// Called every frame to update this actor.
+    void Tick(float DeltaSeconds) override;
 	
 private:
 	/// Variables.
 
 	/// Functions.
-	 void BeginPlay() override;
-	 ATank* GetControlledPawn() const;
+	ATank* GetControlledPawn() const;
 };

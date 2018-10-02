@@ -2,6 +2,7 @@
 
 #include "TankPlayerController.h"
 
+// Called when the game starts.
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -12,6 +13,13 @@ void ATankPlayerController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[%s] found controlled pawn: %s"), *(GetName()), *(ControlledTank->GetName()));
 	}
+}
+
+// Called every frame to update this actor.
+void ATankPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UE_LOG(LogTemp, Warning, TEXT("ticking..."));
 }
 
 ATank* ATankPlayerController::GetControlledPawn() const
