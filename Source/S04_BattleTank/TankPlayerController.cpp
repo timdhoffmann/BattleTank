@@ -13,7 +13,6 @@ void ATankPlayerController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[%s] found controlled pawn: %s"), *(GetName()), *(ControlledTank->GetName()));
 	}
-
 }
 
 // Called every frame to update this actor.
@@ -31,15 +30,12 @@ void ATankPlayerController::AimAtCrosshair() const
 		return;
 	}
 
-	FVector OutHitLocation = FVector(0.0f, 0.0f, 0.0f); // Out parameter.
-	// Get world location from line trace through crosshair.
-	if (GetHitLocation(OutHitLocation))
+	FVector OutHitLocation = FVector(0.0f); // Out parameter.
+	if (GetCrosshairHitLocation(OutHitLocation))
 	{
-		
 		UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
 
-		// TODO: implementation:
-		// If it hits the landscape.
+		// TODO: If it hits the landscape...
 		// Tell controlled tank to aim at this point. 
 	}
 }
@@ -49,7 +45,8 @@ ATank* ATankPlayerController::GetControlledPawn() const
 	return Cast<ATank>(GetPawn());
 }
 
-bool ATankPlayerController::GetHitLocation(FVector& OutHitLocation) const
+// Get world location from line trace through crosshair.
+bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
 {
 	/// Set up parameters used for the LineTrace.
 	FHitResult OutHitResult;
@@ -61,8 +58,7 @@ bool ATankPlayerController::GetHitLocation(FVector& OutHitLocation) const
 		GetOwner()			// ignore ourselves (because the LineTrace starts in the center of our body).
 	);
 
-	// Execute LineTrace (Ray-cast).
-	
+	/// Execute LineTrace (Ray-cast).
 	if 
 	(
 		GetWorld()->LineTraceSingleByObjectType

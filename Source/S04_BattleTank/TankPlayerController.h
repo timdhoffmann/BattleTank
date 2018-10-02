@@ -29,7 +29,10 @@ private:
 	/// Functions.
 	ATank* GetControlledPawn() const;
 
-	bool GetHitLocation(FVector& OutHitLocation) const;
+	/// Gets the world location hit from line trace through the crosshair and stores it in the out parameter.
+	/// Returns true if hit landscape. 
+	// TODO: Check condition for returning true.
+	bool GetCrosshairHitLocation(FVector& OutHitLocation) const;
 
 	// Gets the start of the line trace.
 	FVector GetLineTraceStart() const;
