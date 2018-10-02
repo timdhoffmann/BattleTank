@@ -27,7 +27,7 @@ ATank* ATankAIController::GetControlledPawn() const
 /// Gets the tank controlled by the player.
 ATank * ATankAIController::GetPlayerPawn() const
 {
-	auto PlayerTank = GetWorld()->GetFirstPlayerController()->GetPawn();
+	auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
-	return Cast<ATank>(PlayerTank);
+	return Cast<ATank>(PlayerPawn);
 }
