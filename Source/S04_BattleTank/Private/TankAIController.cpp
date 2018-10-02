@@ -13,7 +13,7 @@ void ATankAIController::BeginPlay()
 	auto PlayerTank = GetPlayerPawn();
 	if (ensureMsgf(PlayerTank != nullptr, TEXT("No player pawn found.")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s] found player controlled pawn [%s]"), *(ControlledTank->GetName()), *(PlayerTank->GetName()));
+		UE_LOG(LogTemp, Warning, TEXT("[%s] found player controlled pawn [%s]"), *(GetName()), *(PlayerTank->GetName()));
 	}
 }
 

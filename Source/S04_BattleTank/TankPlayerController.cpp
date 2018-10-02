@@ -6,15 +6,15 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto ControlledTank = GetControlledTank();
+	auto ControlledTank = GetControlledPawn();
 
 	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found.")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player controlled tank: %s"), *(ControlledTank->GetName()));
+		UE_LOG(LogTemp, Warning, TEXT("[%s] found controlled pawn: %s"), *(GetName()), *(ControlledTank->GetName()));
 	}
 }
 
-ATank* ATankPlayerController::GetControlledTank() const
+ATank* ATankPlayerController::GetControlledPawn() const
 {
 	return Cast<ATank>(GetPawn());
 }

@@ -20,5 +20,5 @@ private:
 
 	/// Functions.
 	 void BeginPlay() override;
-	 ATank* GetControlledTank() const;
+	 ATank* GetControlledPawn() const;
 };
