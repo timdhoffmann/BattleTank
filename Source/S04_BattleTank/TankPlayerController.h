@@ -44,7 +44,7 @@ private:
 
 	// Gets a unit vector in the direction where the crosshair is pointing.
 	// Returns true on success.
-	bool GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector, FVector& OutCrosshairWorldLocation) const;
+	bool GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector) const;
 
 	/// Gets the world location hit from line trace through the crosshair and stores it in the out parameter.
 	/// Returns true if hit landscape. 
@@ -59,5 +59,5 @@ private:
 
 	// Performs a line trace and stores the hit location in the out parameter.
 	// Returns false if nothing was hit.
-	bool GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceStart, const FVector LineTraceDirection) const;
+	bool GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const;
 };

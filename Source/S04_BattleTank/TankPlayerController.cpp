@@ -67,25 +67,29 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	// 2. De-project screen position of crosshair to a world direction. 
 	// 3. Line trace along that look direction and see what we hit.
 
-	FVector OutAimDirectionUnitVector, OutCrosshairWorldLocation;
 	// Get aim direction unit vector.
-	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector,OutCrosshairWorldLocation))
+	FVector OutAimDirectionUnitVector;
+	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector))
 	{
-		return GetAimDirectionHitLocation(OutHitLocation, OutCrosshairWorldLocation, OutAimDirectionUnitVector);
-
+		// Line traces along aim direction unit vector up to max range and looks for whats being hit.
+		return GetAimDirectionHitLocation(OutHitLocation, OutAimDirectionUnitVector);
 	}
 	return false;
 }
 
-bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector, FVector& OutCrosshairWorldLocation) const
+bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector) const
 {
 	int32 OutViewportSizeX, OutViewportSizeY;
 	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
 
 	// Calculates CrosshairScreenPosition in pixel coordinates.
-	const auto CrosshairScreenPosition = FVector(OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f);
+	const auto CrosshairScreenPosition = FVector
+	(
+		OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f
+	);
 
 	// De-projects screen position to world coordinates.
+	auto OutCrosshairWorldLocation = FVector(0.0f);
 	return DeprojectScreenPositionToWorld
 	(
 		CrosshairScreenPosition.X,
@@ -95,10 +99,11 @@ bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirec
 	);
 }
 
-bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceStart, const FVector LineTraceDirection) const
+bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const
 {
 	/// Set up arguments used for the LineTrace.
 	FHitResult OutHitResult;
+	const auto LineTraceStart = PlayerCameraManager->GetCameraLocation();
 	const ECollisionChannel ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
 	const FName TraceTag("DebugViewport");
 	const FCollisionQueryParams AdditionalTraceParameters
@@ -121,6 +126,7 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 
 		// Draw debug trace.
 		GetWorld()->DebugDrawTraceTag = TraceTag;
+
 		UE_LOG(LogTemp, Warning, TEXT("Hitresult: %s"), *OutHitResult.Actor->GetName());
 
 		return true;
