@@ -63,7 +63,7 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	(
 		GetWorld()->LineTraceSingleByObjectType
 		(
-			OutHitResult, GetLineTraceStart(), GetLineTraceEnd(), ObjectTypesLookedFor, AdditionalTraceParameters
+			OutHitResult, GetLineTraceStart(), GetLineTraceEnd(10), ObjectTypesLookedFor, AdditionalTraceParameters
 		)
 	)
 	{
@@ -83,15 +83,14 @@ FVector ATankPlayerController::GetLineTraceStart() const
 	return OutLocation;
 }
 
-FVector ATankPlayerController::GetLineTraceEnd() const
+FVector ATankPlayerController::GetLineTraceEnd(int ReachInMeters) const
 {
 	// Get PlayerViewPoint data.
 	FVector OutLocation;
 	FRotator OutRotation;
-	GetPlayerViewPoint(OUT OutLocation, OUT OutRotation);
+	GetPlayerViewPoint(OutLocation, OutRotation);
 
 	const FVector LineTraceDirection = OutRotation.Vector(); // (Normalized) unit vector of length 1.
-	const int Meters = 100;
-	return OutLocation + LineTraceDirection * 10 * Meters;
+	return OutLocation + LineTraceDirection * ReachInMeters * 100;
 }
 
