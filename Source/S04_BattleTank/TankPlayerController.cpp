@@ -71,9 +71,8 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	// Get aim direction unit vector.
 	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector,OutCrosshairWorldLocation))
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("AimDirectionUnitVector: %s"), *OutAimDirectionUnitVector.ToString());
-
 		return GetAimDirectionHitLocation(OutHitLocation, OutCrosshairWorldLocation, OutAimDirectionUnitVector);
+
 	}
 	return false;
 }
@@ -122,6 +121,7 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 
 		// Draw debug trace.
 		GetWorld()->DebugDrawTraceTag = TraceTag;
+		UE_LOG(LogTemp, Warning, TEXT("Hitresult: %s"), *OutHitResult.Actor->GetName());
 
 		return true;
 	}
