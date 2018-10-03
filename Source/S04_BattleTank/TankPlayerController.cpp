@@ -2,6 +2,7 @@
 
 #include "TankPlayerController.h"
 
+#pragma region Overrides
 // Called when the game starts.
 void ATankPlayerController::BeginPlay()
 {
@@ -32,6 +33,8 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 		Color
 		);*/
 }
+#pragma endregion
+
 
 void ATankPlayerController::AimAtCrosshair() const
 {
@@ -50,11 +53,7 @@ void ATankPlayerController::AimAtCrosshair() const
 	}
 }
 
-ATank* ATankPlayerController::GetControlledPawn() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
+#pragma region Getters
 bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& AimDirectionUnitVector) const
 {
 	int32 OutViewportSizeX, OutViewportSizeY;
@@ -76,6 +75,11 @@ bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& AimDirectio
 	);
 }
 
+ATank* ATankPlayerController::GetControlledPawn() const
+{
+	return Cast<ATank>(GetPawn());
+}
+
 // Get world location from line trace through crosshair.
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
 {
@@ -85,38 +89,38 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	// 3. Line trace along that look direction and see what we hit.
 
 	FVector OutAimDirectionUnitVector;
-
+	// Get aim direction unit vector.
 	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AimDirectionUnitVector: %s"), *OutAimDirectionUnitVector.ToString());
-	}
 
-	
-	/// Set up parameters used for the LineTrace.
-	const FName TraceTag("DebugViewport");
-	FHitResult OutHitResult;
-	const FCollisionObjectQueryParams ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
-	const FCollisionQueryParams AdditionalTraceParameters
-	(
-		TraceTag, // use empty tag,
-		false, // use simplified collider,
-		GetOwner() // ignore ourselves (because the LineTrace starts in the center of our body).
-	);
-
-	// Draw debug trace.
-	GetWorld()->DebugDrawTraceTag = TraceTag;
-
-	/// Execute LineTrace (Ray-cast).
-	if 
-	(
-		GetWorld()->LineTraceSingleByObjectType
+		/// Set up parameters used for the LineTrace.
+		const FName TraceTag("DebugViewport");
+		FHitResult OutHitResult;
+		const FCollisionObjectQueryParams ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
+		const FCollisionQueryParams AdditionalTraceParameters
 		(
-			OutHitResult, GetLineTraceStart(), GetLineTraceEnd(10), ObjectTypesLookedFor, AdditionalTraceParameters
+			TraceTag, // use empty tag,
+			false, // use simplified collider,
+			GetOwner() // ignore ourselves (because the LineTrace starts in the center of our body).
+		);
+
+		/// Execute LineTrace (Ray-cast).
+		if
+		(
+			GetWorld()->LineTraceSingleByObjectType
+			(
+				OutHitResult, GetLineTraceStart(), GetLineTraceEnd(10), ObjectTypesLookedFor, AdditionalTraceParameters
+			)
 		)
-	)
-	{
-		OutHitLocation = OutHitResult.ImpactPoint;
-		return true;
+		{
+			OutHitLocation = OutHitResult.ImpactPoint;
+
+			// Draw debug trace.
+			GetWorld()->DebugDrawTraceTag = TraceTag;
+
+			return true;
+		}
 	}
 	return false;
 }
@@ -135,4 +139,4 @@ FVector ATankPlayerController::GetLineTraceEnd(const int32 MaxRangeMeters) const
 
 	return FVector();
 }
-
+#pragma endregion
