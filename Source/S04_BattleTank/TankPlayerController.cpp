@@ -79,7 +79,7 @@ bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& AimDirectio
 // Get world location from line trace through crosshair.
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
 {
-	// TODO: Does this happen?: 
+	// TODO: Does this happen?:
 	// 1. Find crosshair position in pixel coordinates. 
 	// 2. De-project screen position of crosshair to a world direction. 
 	// 3. Line trace along that look direction and see what we hit.
