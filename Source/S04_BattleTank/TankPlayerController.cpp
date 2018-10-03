@@ -64,9 +64,9 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	const FCollisionObjectQueryParams ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
 	const FCollisionQueryParams AdditionalTraceParameters
 	(
-		TraceTag,	// use empty tag,
-		false,				// use simplified collider,
-		GetOwner()			// ignore ourselves (because the LineTrace starts in the center of our body).
+		TraceTag, // use empty tag,
+		false, // use simplified collider,
+		GetOwner() // ignore ourselves (because the LineTrace starts in the center of our body).
 	);
 
 	// Draw debug trace.

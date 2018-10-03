@@ -26,7 +26,13 @@ public:
     virtual void Tick(float DeltaSeconds) override;
 	
 private:
-	/// Functions.
+	/// Variables:
+	UPROPERTY(EditAnywhere)
+	float CrosshairXLocation = 0.5f;
+	UPROPERTY(EditAnywhere)
+	float CrosshairYLocation = 0.33333f;
+
+	/// Functions:
 	ATank* GetControlledPawn() const;
 
 	/// Gets the world location hit from line trace through the crosshair and stores it in the out parameter.
