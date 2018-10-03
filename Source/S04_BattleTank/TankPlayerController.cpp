@@ -109,28 +109,15 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 // Gets the start of the line trace.
 FVector ATankPlayerController::GetLineTraceStart() const
 {
-	
+	// TODO: Implementation.
 
-	/*FVector OutLocation;
-	FRotator OutRotation;
-	GetPlayerViewPoint(OutLocation, OutRotation);
-
-	OutLocation.X *= CrosshairScreenLocation.X;
-	OutLocation.Y *= CrosshairScreenLocation.Y;*/
-
-	// TODO: Return useful value.
-	const FVector LineTraceStart = FVector(0.0f, 0.0f, 0.0f);
-	return LineTraceStart;
+	return FVector();
 }
 
 FVector ATankPlayerController::GetLineTraceEnd(const int32 MaxRangeMeters) const
 {
-	// Get PlayerViewPoint data.
-	FVector OutLocation;
-	FRotator OutRotation;
-	GetPlayerViewPoint(OutLocation, OutRotation);
+	// TODO: Implementation.
 
-	const FVector LineTraceDirection = OutRotation.Vector(); // (Normalized) unit vector of length 1.
-	return OutLocation + LineTraceDirection * MaxRangeMeters * 100;
+	return FVector();
 }
 
