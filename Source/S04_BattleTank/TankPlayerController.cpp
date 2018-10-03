@@ -46,7 +46,7 @@ void ATankPlayerController::AimAtCrosshair() const
 	auto OutHitLocation = FVector(0.0f); // Out parameter.
 	if (GetCrosshairHitLocation(OutHitLocation))
 	{
-		// UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
+		UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
 
 		// TODO: If it hits the landscape...
 		// Tell controlled tank to aim at this point. 
@@ -106,21 +106,16 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 	const auto LineTraceStart = PlayerCameraManager->GetCameraLocation();
 	const auto LineTraceEnd = LineTraceStart + LineTraceDirection * AimLineTraceRangeKm * 1e5;
 	const ECollisionChannel ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
+
 	const FName TraceTag("DebugViewport");
-	const FCollisionQueryParams AdditionalTraceParameters
-	(
-		TraceTag, // tag to identify the line trace,
-		false, // use simplified collider,
-		GetOwner() // ignore ourselves (because the LineTrace starts in the center of our body).
-	);
+	const auto UseSimplifiedCollider = false;
+	const AActor* ActorToIgnore = GetOwner(); // Ourselves (because the LineTrace starts in the center of our body).
+	const FCollisionQueryParams AdditionalTraceParameters(TraceTag, UseSimplifiedCollider, ActorToIgnore);
 
 	/// Execute LineTrace (Ray-cast).
-	if
-	(
-		GetWorld()->LineTraceSingleByChannel
-		(
+	if (GetWorld()->LineTraceSingleByChannel(
 			OutHitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
-		)
+			)
 	)
 	{
 		OutHitLocation = OutHitResult.ImpactPoint;
@@ -128,25 +123,8 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 		// Draw debug trace.
 		GetWorld()->DebugDrawTraceTag = TraceTag;
 
-		UE_LOG(LogTemp, Warning, TEXT("Hitresult: %s"), *OutHitResult.Actor->GetName());
-
 		return true;
 	}
 	return false;
-}
-
-// Gets the start of the line trace.
-FVector ATankPlayerController::GetLineTraceStart() const
-{
-	// TODO: Implementation.
-
-	return FVector();
-}
-
-FVector ATankPlayerController::GetLineTraceEnd(const int32 MaxRangeMeters) const
-{
-	// TODO: Implementation.
-
-	return FVector();
 }
 #pragma endregion

@@ -51,12 +51,6 @@ private:
 	// TODO: Check condition for returning true.
 	bool GetCrosshairHitLocation(FVector& OutHitLocation) const;
 
-	// Gets the start of the line trace.
-	FVector GetLineTraceStart() const;
-	
-	// Gets the end of the line trace in MaxRangeMeters distance.
-	FVector GetLineTraceEnd(int32 MaxRangeMeters) const;
-
 	// Performs a line trace and stores the hit location in the out parameter.
 	// Returns false if nothing was hit.
 	bool GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const;
