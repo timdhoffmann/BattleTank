@@ -29,15 +29,22 @@ private:
 	/// Variables:
 	UPROPERTY(EditAnywhere)
 	float CrosshairXLocation = 0.5f;
+	
 	UPROPERTY(EditAnywhere)
 	float CrosshairYLocation = 0.33333f;
 
+	UPROPERTY(EditAnywhere)
+	int32 AimLineTraceRangeKm = 10;
+
 	/// Functions:
+	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world.
+	void AimAtCrosshair() const;
+
 	ATank* GetControlledPawn() const;
 
 	// Gets a unit vector in the direction where the crosshair is pointing.
 	// Returns true on success.
-	bool GetAimDirectionThroughCrosshair(FVector& AimDirectionUnitVector) const;
+	bool GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector, FVector& OutCrosshairWorldLocation) const;
 
 	/// Gets the world location hit from line trace through the crosshair and stores it in the out parameter.
 	/// Returns true if hit landscape. 
@@ -50,6 +57,7 @@ private:
 	// Gets the end of the line trace in MaxRangeMeters distance.
 	FVector GetLineTraceEnd(int32 MaxRangeMeters) const;
 
-	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world.
-	void AimAtCrosshair() const;
+	// Performs a line trace and stores the hit location in the out parameter.
+	// Returns false if nothing was hit.
+	bool GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceStart, const FVector LineTraceDirection) const;
 };

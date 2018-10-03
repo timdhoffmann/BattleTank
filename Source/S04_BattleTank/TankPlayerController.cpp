@@ -43,7 +43,7 @@ void ATankPlayerController::AimAtCrosshair() const
 		return;
 	}
 
-	FVector OutHitLocation = FVector(0.0f); // Out parameter.
+	auto OutHitLocation = FVector(0.0f); // Out parameter.
 	if (GetCrosshairHitLocation(OutHitLocation))
 	{
 		// UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
@@ -54,27 +54,6 @@ void ATankPlayerController::AimAtCrosshair() const
 }
 
 #pragma region Getters
-bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& AimDirectionUnitVector) const
-{
-	int32 OutViewportSizeX, OutViewportSizeY;
-	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
-
-	// Calculates CrosshairScreenPosition in pixel coordinates.
-	const auto CrosshairScreenPosition = FVector(OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f);
-
-	// Needs to be provided as an argument.
-	FVector OutWorldLocation;
-
-	// De-projects screen position to world coordinates.
-	return DeprojectScreenPositionToWorld
-	(
-		CrosshairScreenPosition.X,
-		CrosshairScreenPosition.Y,
-		OutWorldLocation,
-		AimDirectionUnitVector
-	);
-}
-
 ATank* ATankPlayerController::GetControlledPawn() const
 {
 	return Cast<ATank>(GetPawn());
@@ -88,39 +67,63 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	// 2. De-project screen position of crosshair to a world direction. 
 	// 3. Line trace along that look direction and see what we hit.
 
-	FVector OutAimDirectionUnitVector;
+	FVector OutAimDirectionUnitVector, OutCrosshairWorldLocation;
 	// Get aim direction unit vector.
-	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector))
+	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector,OutCrosshairWorldLocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AimDirectionUnitVector: %s"), *OutAimDirectionUnitVector.ToString());
+		// UE_LOG(LogTemp, Warning, TEXT("AimDirectionUnitVector: %s"), *OutAimDirectionUnitVector.ToString());
 
-		/// Set up parameters used for the LineTrace.
-		const FName TraceTag("DebugViewport");
-		FHitResult OutHitResult;
-		const FCollisionObjectQueryParams ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
-		const FCollisionQueryParams AdditionalTraceParameters
-		(
-			TraceTag, // use empty tag,
-			false, // use simplified collider,
-			GetOwner() // ignore ourselves (because the LineTrace starts in the center of our body).
-		);
+		return GetAimDirectionHitLocation(OutHitLocation, OutCrosshairWorldLocation, OutAimDirectionUnitVector);
+	}
+	return false;
+}
 
-		/// Execute LineTrace (Ray-cast).
-		if
+bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector, FVector& OutCrosshairWorldLocation) const
+{
+	int32 OutViewportSizeX, OutViewportSizeY;
+	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
+
+	// Calculates CrosshairScreenPosition in pixel coordinates.
+	const auto CrosshairScreenPosition = FVector(OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f);
+
+	// De-projects screen position to world coordinates.
+	return DeprojectScreenPositionToWorld
+	(
+		CrosshairScreenPosition.X,
+		CrosshairScreenPosition.Y,
+		OutCrosshairWorldLocation,
+		OutAimDirectionUnitVector
+	);
+}
+
+bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceStart, const FVector LineTraceDirection) const
+{
+	/// Set up arguments used for the LineTrace.
+	FHitResult OutHitResult;
+	const ECollisionChannel ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
+	const FName TraceTag("DebugViewport");
+	const FCollisionQueryParams AdditionalTraceParameters
+	(
+		TraceTag, // tag to identify the line trace,
+		false, // use simplified collider,
+		GetOwner() // ignore ourselves (because the LineTrace starts in the center of our body).
+	);
+
+	/// Execute LineTrace (Ray-cast).
+	if
+	(
+		GetWorld()->LineTraceSingleByChannel
 		(
-			GetWorld()->LineTraceSingleByObjectType
-			(
-				OutHitResult, GetLineTraceStart(), GetLineTraceEnd(10), ObjectTypesLookedFor, AdditionalTraceParameters
-			)
+			OutHitResult, LineTraceStart, LineTraceDirection * AimLineTraceRangeKm * 1e5, ObjectTypesLookedFor, AdditionalTraceParameters
 		)
-		{
-			OutHitLocation = OutHitResult.ImpactPoint;
+	)
+	{
+		OutHitLocation = OutHitResult.ImpactPoint;
 
-			// Draw debug trace.
-			GetWorld()->DebugDrawTraceTag = TraceTag;
+		// Draw debug trace.
+		GetWorld()->DebugDrawTraceTag = TraceTag;
 
-			return true;
-		}
+		return true;
 	}
 	return false;
 }
