@@ -43,7 +43,7 @@ void ATankPlayerController::AimAtCrosshair() const
 	FVector OutHitLocation = FVector(0.0f); // Out parameter.
 	if (GetCrosshairHitLocation(OutHitLocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
+		// UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
 
 		// TODO: If it hits the landscape...
 		// Tell controlled tank to aim at this point. 
@@ -58,6 +58,29 @@ ATank* ATankPlayerController::GetControlledPawn() const
 // Get world location from line trace through crosshair.
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
 {
+	// TODO: Does this happen?: 
+	// 1. Find crosshair position in pixel coordinates. 
+	// 2. De-project screen position of crosshair to a world direction. 
+	// 3. Line trace along that look direction and see what we hit.
+	
+	/// Finds crosshair position in pixel coordinates.
+	int32 OutViewportSizeX, OutViewportSizeY;
+	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
+	const auto CrosshairScreenLocation = FVector(OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f);
+
+	/// De-projects screen position to world coordinates.
+	// Set up out parameters.
+	FVector OutWorldLocation, OutWorldDirection;
+	bool HasWorldPositionFromScreenPosition = DeprojectScreenPositionToWorld
+	(
+		CrosshairScreenLocation.X,
+		CrosshairScreenLocation.Y,
+		OutWorldLocation,
+		OutWorldDirection
+	);
+
+	UE_LOG(LogTemp, Warning, TEXT("OutWorldDirection: %s"), *(OutWorldDirection.ToString()));
+	
 	/// Set up parameters used for the LineTrace.
 	const FName TraceTag("DebugViewport");
 	FHitResult OutHitResult;
@@ -85,21 +108,13 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 		return true;
 	}
 	return false;
-	// TODO: Does this happen?: 
-	// 1. Find crosshair position. 
-	// 2. De-project screen position of crosshair to a world direction. 
-	// 3. Line trace along that look direction and see what we hit.
 }
 
 // Gets the start of the line trace.
 FVector ATankPlayerController::GetLineTraceStart() const
 {
-	// Gets viewport size.
-	int32 OutViewportSizeX, OutViewportSizeY;
-	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
+	
 
-	const auto CrosshairScreenLocation = FVector(OutViewportSizeX * CrosshairXLocation,
-	                                             OutViewportSizeY * CrosshairYLocation, 0.0f);
 	/*FVector OutLocation;
 	FRotator OutRotation;
 	GetPlayerViewPoint(OutLocation, OutRotation);
