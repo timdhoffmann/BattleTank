@@ -36,6 +36,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	int32 AimLineTraceRangeKm = 10;
 
+	// The Tank controlled by the player.
+	const ATank* ControlledTank = nullptr;
+
 	/// Functions:
 	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world.
 	void AimAtCrosshair() const;

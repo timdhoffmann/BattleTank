@@ -8,7 +8,7 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const auto ControlledTank = GetControlledPawn();
+	ControlledTank = GetControlledPawn();
 
 	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found.")))
 	{
@@ -22,27 +22,13 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	AimAtCrosshair();
-
-	/*const FColor Color = FColor Red;
-
-	DrawDebugLine
-	(
-		GetWorld(),
-		GetLineTraceStart(),
-		GetLineTraceEnd(10),
-		Color
-		);*/
 }
 #pragma endregion
 
 
 void ATankPlayerController::AimAtCrosshair() const
 {
-	const auto ControlledTank = GetControlledPawn();
-	if (!ControlledTank)
-	{
-		return;
-	}
+	ensure(ControlledTank);
 
 	auto HitLocation = FVector(0.0f); // Out parameter.
 	if (GetCrosshairHitLocation(HitLocation))
