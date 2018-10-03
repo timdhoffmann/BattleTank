@@ -19,11 +19,25 @@ class S04_BATTLETANK_API ATankAIController : public AAIController
 
 public:
 	/// Functions:
-	// Called when the game starts.
-	void BeginPlay() override;
+	
 	
 private:
+	/// Variables:
+
+	// The Tank controlled by this AI.
+	const ATank* ControlledTank = nullptr;
+
+	// The Tank controlled by the player.
+	const ATank* PlayerTank = nullptr;
+
 	/// Functions:
+
+	// Called when the game starts.
+	virtual void BeginPlay() override;
+
+	// Called every frame.
+	virtual void Tick(float DeltaSeconds) override;
+
 	// Gets the tank, this controller is controlling.
 	ATank* GetControlledPawn() const;
 

@@ -19,11 +19,7 @@ class S04_BATTLETANK_API ATankPlayerController : public APlayerController
 
 public:
 	/// Functions:
-	// Called when the game starts.
-	virtual void BeginPlay() override;
 	
-	// Called every frame to update this actor.
-    virtual void Tick(float DeltaSeconds) override;
 	
 private:
 	/// Variables:
@@ -40,6 +36,13 @@ private:
 	const ATank* ControlledTank = nullptr;
 
 	/// Functions:
+
+	// Called when the game starts.
+	virtual void BeginPlay() override;
+	
+	// Called every frame to update this actor.
+    virtual void Tick(float DeltaSeconds) override;
+
 	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world.
 	void AimAtCrosshair() const;
 

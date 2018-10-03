@@ -5,16 +5,25 @@
 // Called when the game starts.
 void ATankAIController::BeginPlay()
 {
-	auto ControlledTank = GetControlledPawn();
-	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled pawn found.")))
-	{
-	}
+	Super::BeginPlay();
 
-	auto PlayerTank = GetPlayerPawn();
+	ControlledTank = GetControlledPawn();
+	ensureMsgf(ControlledTank != nullptr, TEXT("No controlled pawn found."));
+
+	PlayerTank = GetPlayerPawn();
 	if (ensureMsgf(PlayerTank != nullptr, TEXT("No player pawn found.")))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("[%s] found player controlled pawn [%s]"), *(GetName()), *(PlayerTank->GetName()));
 	}
+}
+
+void ATankAIController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	ensure(ControlledTank);
+	ensure(PlayerTank);
+	ControlledTank->AimAt(PlayerTank->GetActorLocation());
 }
 
 /// Gets the tank controlled by this object.
@@ -26,7 +35,7 @@ ATank* ATankAIController::GetControlledPawn() const
 /// Gets the tank controlled by the player.
 ATank * ATankAIController::GetPlayerPawn() const
 {
-	auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	const auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
 	return Cast<ATank>(PlayerPawn);
 }
