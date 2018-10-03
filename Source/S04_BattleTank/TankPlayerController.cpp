@@ -71,15 +71,11 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	/// De-projects screen position to world coordinates.
 	// Set up out parameters.
 	FVector OutWorldLocation, OutWorldDirection;
-	bool HasWorldPositionFromScreenPosition = DeprojectScreenPositionToWorld
-	(
-		CrosshairScreenLocation.X,
-		CrosshairScreenLocation.Y,
-		OutWorldLocation,
-		OutWorldDirection
-	);
+	if (DeprojectScreenPositionToWorld(CrosshairScreenLocation.X, CrosshairScreenLocation.Y, OutWorldLocation,	OutWorldDirection))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OutWorldDirection: %s"), *(OutWorldDirection.ToString()));
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OutWorldDirection: %s"), *(OutWorldDirection.ToString()));
 	
 	/// Set up parameters used for the LineTrace.
 	const FName TraceTag("DebugViewport");
