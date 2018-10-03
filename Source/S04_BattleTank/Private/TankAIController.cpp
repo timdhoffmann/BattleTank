@@ -2,7 +2,8 @@
 
 #include "TankAIController.h"
 
-// Called when the game starts.
+#pragma region Overrides
+
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -25,6 +26,8 @@ void ATankAIController::Tick(float DeltaSeconds)
 	ensure(PlayerTank);
 	ControlledTank->AimAt(PlayerTank->GetActorLocation());
 }
+#pragma endregion
+
 
 /// Gets the tank controlled by this object.
 ATank* ATankAIController::GetControlledPawn() const

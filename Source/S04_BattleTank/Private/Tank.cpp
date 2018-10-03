@@ -11,11 +11,13 @@ ATank::ATank()
 
 }
 
+#pragma region Overrides
+
 // Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -24,6 +26,8 @@ void ATank::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+#pragma endregion
+
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
