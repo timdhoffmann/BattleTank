@@ -35,6 +35,10 @@ private:
 	/// Functions:
 	ATank* GetControlledPawn() const;
 
+	// Gets a unit vector in the direction where the crosshair is pointing.
+	// Returns true on success.
+	bool GetAimDirectionThroughCrosshair(FVector& AimDirectionUnitVector) const;
+
 	/// Gets the world location hit from line trace through the crosshair and stores it in the out parameter.
 	/// Returns true if hit landscape. 
 	// TODO: Check condition for returning true.

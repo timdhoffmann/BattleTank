@@ -55,6 +55,27 @@ ATank* ATankPlayerController::GetControlledPawn() const
 	return Cast<ATank>(GetPawn());
 }
 
+bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& AimDirectionUnitVector) const
+{
+	int32 OutViewportSizeX, OutViewportSizeY;
+	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
+
+	// Calculates CrosshairScreenPosition in pixel coordinates.
+	const auto CrosshairScreenPosition = FVector(OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f);
+
+	// Needs to be provided as an argument.
+	FVector OutWorldLocation;
+
+	// De-projects screen position to world coordinates.
+	return DeprojectScreenPositionToWorld
+	(
+		CrosshairScreenPosition.X,
+		CrosshairScreenPosition.Y,
+		OutWorldLocation,
+		AimDirectionUnitVector
+	);
+}
+
 // Get world location from line trace through crosshair.
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
 {
@@ -62,18 +83,12 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	// 1. Find crosshair position in pixel coordinates. 
 	// 2. De-project screen position of crosshair to a world direction. 
 	// 3. Line trace along that look direction and see what we hit.
-	
-	/// Finds crosshair position in pixel coordinates.
-	int32 OutViewportSizeX, OutViewportSizeY;
-	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
-	const auto CrosshairScreenLocation = FVector(OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f);
 
-	/// De-projects screen position to world coordinates.
-	// Set up out parameters.
-	FVector OutWorldLocation, OutWorldDirectionUnitVector;
-	if (DeprojectScreenPositionToWorld(CrosshairScreenLocation.X, CrosshairScreenLocation.Y, OutWorldLocation,	OutWorldDirectionUnitVector))
+	FVector OutAimDirectionUnitVector;
+
+	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OutWorldDirection: %s"), *(OutWorldDirectionUnitVector.ToString()));
+		UE_LOG(LogTemp, Warning, TEXT("AimDirectionUnitVector: %s"), *OutAimDirectionUnitVector.ToString());
 	}
 
 	
