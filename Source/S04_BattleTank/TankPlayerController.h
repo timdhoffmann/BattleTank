@@ -37,8 +37,8 @@ private:
 	// Gets the start of the line trace.
 	FVector GetLineTraceStart() const;
 	
-	// Gets the end of the line trace in ReachInMeters distance.
-	FVector GetLineTraceEnd(int ReachInMeters) const;
+	// Gets the end of the line trace in MaxRangeMeters distance.
+	FVector GetLineTraceEnd(int32 MaxRangeMeters) const;
 
 	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world.
 	void AimAtCrosshair() const;
