@@ -104,6 +104,7 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 	/// Set up arguments used for the LineTrace.
 	FHitResult OutHitResult;
 	const auto LineTraceStart = PlayerCameraManager->GetCameraLocation();
+	const auto LineTraceEnd = LineTraceStart + LineTraceDirection * AimLineTraceRangeKm * 1e5;
 	const ECollisionChannel ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
 	const FName TraceTag("DebugViewport");
 	const FCollisionQueryParams AdditionalTraceParameters
@@ -118,7 +119,7 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 	(
 		GetWorld()->LineTraceSingleByChannel
 		(
-			OutHitResult, LineTraceStart, LineTraceDirection * AimLineTraceRangeKm * 1e5, ObjectTypesLookedFor, AdditionalTraceParameters
+			OutHitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
 		)
 	)
 	{
