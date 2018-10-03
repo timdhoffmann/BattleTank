@@ -38,16 +38,16 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 
 void ATankPlayerController::AimAtCrosshair() const
 {
-	if (!GetControlledPawn())
+	const auto ControlledTank = GetControlledPawn();
+	if (!ControlledTank)
 	{
 		return;
 	}
 
-	auto OutHitLocation = FVector(0.0f); // Out parameter.
-	if (GetCrosshairHitLocation(OutHitLocation))
+	auto HitLocation = FVector(0.0f); // Out parameter.
+	if (GetCrosshairHitLocation(HitLocation))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *(GetName()), *(OutHitLocation.ToString()));
-
+		ControlledTank->AimAt(HitLocation);
 		// TODO: If it hits the landscape...
 		// Tell controlled tank to aim at this point. 
 	}
@@ -68,33 +68,33 @@ bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) con
 	// 3. Line trace along that look direction and see what we hit.
 
 	// Get aim direction unit vector.
-	FVector OutAimDirectionUnitVector;
-	if (GetAimDirectionThroughCrosshair(OutAimDirectionUnitVector))
+	FVector AimDirectionUnitVector;
+	if (GetAimDirectionThroughCrosshair(AimDirectionUnitVector))
 	{
 		// Line traces along aim direction unit vector up to max range and looks for whats being hit.
-		return GetAimDirectionHitLocation(OutHitLocation, OutAimDirectionUnitVector);
+		return GetAimDirectionHitLocation(OutHitLocation, AimDirectionUnitVector);
 	}
 	return false;
 }
 
 bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirectionUnitVector) const
 {
-	int32 OutViewportSizeX, OutViewportSizeY;
-	GetViewportSize(OutViewportSizeX, OutViewportSizeY);
+	int32 ViewportSizeX, ViewportSizeY;
+	GetViewportSize(ViewportSizeX, ViewportSizeY);
 
 	// Calculates CrosshairScreenPosition in pixel coordinates.
 	const auto CrosshairScreenPosition = FVector
 	(
-		OutViewportSizeX * CrosshairXLocation, OutViewportSizeY * CrosshairYLocation, 0.0f
+		ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation, 0.0f
 	);
 
 	// De-projects screen position to world coordinates.
-	auto OutCrosshairWorldLocation = FVector(0.0f);
+	auto CrosshairWorldLocation = FVector(0.0f);
 	return DeprojectScreenPositionToWorld
 	(
 		CrosshairScreenPosition.X,
 		CrosshairScreenPosition.Y,
-		OutCrosshairWorldLocation,
+		CrosshairWorldLocation,
 		OutAimDirectionUnitVector
 	);
 }
@@ -102,7 +102,7 @@ bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirec
 bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const
 {
 	/// Set up arguments used for the LineTrace.
-	FHitResult OutHitResult;
+	FHitResult HitResult;
 	const auto LineTraceStart = PlayerCameraManager->GetCameraLocation();
 	const auto LineTraceEnd = LineTraceStart + LineTraceDirection * AimLineTraceRangeKm * 1e5;
 	const ECollisionChannel ObjectTypesLookedFor(ECollisionChannel::ECC_PhysicsBody);
@@ -114,14 +114,11 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 
 	/// Execute LineTrace (Ray-cast).
 	if (GetWorld()->LineTraceSingleByChannel(
-			OutHitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
+			HitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
 			)
 	)
 	{
-		OutHitLocation = OutHitResult.ImpactPoint;
-
-		// Draw debug trace.
-		GetWorld()->DebugDrawTraceTag = TraceTag;
+		OutHitLocation = HitResult.ImpactPoint;
 
 		return true;
 	}
