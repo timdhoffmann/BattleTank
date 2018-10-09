@@ -2,7 +2,6 @@
 
 #include "TankAimingComponent.h"
 
-
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
 {
@@ -13,16 +12,13 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-
 // Called when the game starts
 void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// ...
-	
 }
-
 
 // Called every frame
 void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -37,4 +33,3 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation) const
 	const FString ParentActorName = GetOwner()->GetName();
 	UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *ParentActorName, *(TargetLocation.ToString()));
 }
-

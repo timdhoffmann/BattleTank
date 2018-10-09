@@ -6,8 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class S04_BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -24,7 +23,6 @@ public:
 
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
-
 
 protected:
 	// Called when the game starts
