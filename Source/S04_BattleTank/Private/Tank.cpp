@@ -9,6 +9,8 @@ ATank::ATank()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// No need to protect pointers here, as they are added at construction.
+	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>(FName("AimingComponent"));
 }
 
 #pragma region Overrides
@@ -17,14 +19,12 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-
 }
 
 // Called every frame
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 #pragma endregion
 
@@ -36,9 +36,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void ATank::AimAt(FVector TargetLocation) const
+void ATank::AimAt(const FVector TargetLocation) const
 {
-	const FString ThisObjectName = GetName();
-	UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *ThisObjectName, *(TargetLocation.ToString()));
-
+	TankAimingComponent->AimAt(TargetLocation);
 }

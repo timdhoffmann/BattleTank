@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Tank.generated.h"
+#include "TankAimingComponent.h"
+#include "Tank.generated.h" // Must be last include.
 
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn
@@ -19,7 +20,14 @@ public:
 	ATank();
 
 	// Aims at a target location.
-	void AimAt(FVector TargetLocation) const;
+	void AimAt(const FVector TargetLocation) const;
+
+protected:
+
+	/// Variables:
+
+	// The Actor Component responsible for aiming.
+	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
 
