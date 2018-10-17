@@ -12,6 +12,12 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
+void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
+{
+	Barrel = BarrelToSet;
+	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
+}
+
 // Called when the game starts
 void UTankAimingComponent::BeginPlay()
 {
@@ -31,5 +37,7 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 void UTankAimingComponent::AimAt(const FVector TargetLocation) const
 {
 	const FString ParentActorName = GetOwner()->GetName();
-	UE_LOG(LogTemp, Warning, TEXT("[%s] HitLocation: %s"), *ParentActorName, *(TargetLocation.ToString()));
+	const FVector BarrelLocation = Barrel->GetComponentLocation();
+
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s"), *ParentActorName, *BarrelLocation.ToString(), *TargetLocation.ToString());
 }
