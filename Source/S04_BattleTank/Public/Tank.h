@@ -25,6 +25,10 @@ public:
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
 
+	/// Variables;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Firing)
+		float LaunchSpeed = 10e3f;
+
 protected:
 
 	/// Variables:

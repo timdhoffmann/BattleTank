@@ -34,10 +34,10 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UTankAimingComponent::AimAt(const FVector TargetLocation) const
+void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
 {
 	const FString ParentActorName = GetOwner()->GetName();
 	const FVector BarrelLocation = Barrel->GetComponentLocation();
 
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s"), *ParentActorName, *BarrelLocation.ToString(), *TargetLocation.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. LaunchSpeed: %f"), *ParentActorName, *BarrelLocation.ToString(), *TargetLocation.ToString(), LaunchSpeed);
 }
