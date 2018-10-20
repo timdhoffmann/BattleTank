@@ -36,8 +36,34 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
 {
-	const FString ParentActorName = GetOwner()->GetName();
-	const FVector BarrelLocation = Barrel->GetComponentLocation();
+	ensureMsgf(Barrel != nullptr, TEXT("Barrel is nullptr."));
 
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. LaunchSpeed: %f"), *ParentActorName, *BarrelLocation.ToString(), *TargetLocation.ToString(), LaunchSpeed);
+	/// Set up of arguments for SuggestProjectileVelocity().
+	// Initializes OutLaunchVelocity to 0.
+	FVector OutLaunchVelocity(0);
+	const FVector StartLocation = Barrel->GetSocketLocation("ProjectileStart");
+	const auto ActorsToIgnore = TArray<AActor*>();
+
+	// Calculates the suggested projectile velocity.
+	if (UGameplayStatics::SuggestProjectileVelocity(
+		this,
+		OutLaunchVelocity,
+		StartLocation,
+		TargetLocation,
+		LaunchSpeed,
+		false,
+		0.0f,
+		0.0f,
+		ESuggestProjVelocityTraceOption::DoNotTrace,
+		FCollisionResponseParams::DefaultResponseParam,
+		ActorsToIgnore,
+		false)
+		)
+	{
+		// Stores normalized version of the suggested LaunchVelocity.
+		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+
+		const FString ParentActorName = GetOwner()->GetName();
+		UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
+	}
 }
