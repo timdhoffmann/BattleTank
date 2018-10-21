@@ -9,6 +9,7 @@
 class UTankBarrel;
 #pragma endregion
 
+/// Responsible for handling a tank's aiming.
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class S04_BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
