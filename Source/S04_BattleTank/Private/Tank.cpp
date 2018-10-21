@@ -27,7 +27,7 @@ void ATank::Tick(float DeltaTime)
 }
 #pragma endregion
 
-void ATank::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
+void ATank::SetBarrelReference(UTankBarrel* BarrelToSet) const
 {
 	TankAimingComponent->SetBarrelReference(BarrelToSet);
 }

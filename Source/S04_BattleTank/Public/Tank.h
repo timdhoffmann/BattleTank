@@ -2,14 +2,12 @@
 
 #pragma once
 
-// Should be first include.
-#include "CoreMinimal.h"
+#include "CoreMinimal.h" // Should be first include.
 
 #include "GameFramework/Pawn.h"
 #include "TankAimingComponent.h"
 
-// Must be last include.
-#include "Tank.generated.h"
+#include "Tank.generated.h" // Must be last include.
 
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn
@@ -24,7 +22,7 @@ public:
 	ATank();
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetBarrelReference(UStaticMeshComponent* BarrelToSet);
+		void SetBarrelReference(UTankBarrel* BarrelToSet) const;
 
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;

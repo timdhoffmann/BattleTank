@@ -2,16 +2,14 @@
 
 #pragma once
 
-// Should be first include.
-#include "CoreMinimal.h"
+#include "CoreMinimal.h" // Should be first include.
 
 #include "Tank.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
 
-// Must be the last include!
-#include "TankPlayerController.generated.h"
+#include "TankPlayerController.generated.h" // Must be the last include!
 
 /**
  *
@@ -21,10 +19,8 @@ class S04_BATTLETANK_API ATankPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-public:
-	/// Functions:
-
 private:
+#pragma region Variables
 	/// Variables:
 	UPROPERTY(EditAnywhere)
 		float CrosshairXLocation = 0.5f;
@@ -37,9 +33,9 @@ private:
 
 	// The Tank controlled by the player.
 	const ATank* ControlledTank = nullptr;
+#pragma endregion
 
-	/// Functions:
-
+#pragma region Functions
 	// Called when the game starts.
 	virtual void BeginPlay() override;
 
@@ -63,4 +59,5 @@ private:
 	// Performs a line trace and stores the hit location in the out parameter.
 	// Returns false if nothing was hit.
 	bool GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const;
+#pragma endregion
 };

@@ -2,6 +2,8 @@
 
 #include "TankAimingComponent.h"
 
+#include "TankBarrel.h"
+
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
 {
@@ -12,7 +14,7 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
+void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
 	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
@@ -64,14 +66,10 @@ void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
 
-	UE_LOG(LogTemp, Warning, TEXT("DeltaRotator : %s"), *DeltaRotator.ToString());
-
 	// Translate AimDirection into y-rotation.
 
-	// Apply the right y-rotation-amount, this frame, to barrel.
-	// Taking into account max elevation speed and this frame time.
-	const auto RotationSpeed = 2.0f;
-	Barrel->AddLocalRotation(DeltaRotator * RotationSpeed * FApp::GetDeltaTime());
+	// TODO: remove magic number.
+	Barrel->Elevate(5);
 
 	// Use turret for pitch (z-rotation).
 	// Translate AimDirection into z-rotation.
