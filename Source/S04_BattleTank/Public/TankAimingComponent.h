@@ -2,12 +2,15 @@
 
 #pragma once
 
+// Should be first include.
 #include "CoreMinimal.h"
+
 #include "Components/ActorComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
-#include "Runtime/Core/Public/Misc/App.h"
+#include "Misc/App.h"
+
 #include "TankAimingComponent.generated.h"
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))

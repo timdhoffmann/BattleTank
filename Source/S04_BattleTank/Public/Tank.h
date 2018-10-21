@@ -2,10 +2,14 @@
 
 #pragma once
 
+// Should be first include.
 #include "CoreMinimal.h"
+
 #include "GameFramework/Pawn.h"
 #include "TankAimingComponent.h"
-#include "Tank.generated.h" // Must be last include.
+
+// Must be last include.
+#include "Tank.generated.h"
 
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn
