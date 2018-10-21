@@ -18,22 +18,6 @@ void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
 	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
 }
 
-// Called when the game starts
-void UTankAimingComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// ...
-}
-
-// Called every frame
-void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
-}
-
 void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
 {
 	ensureMsgf(Barrel != nullptr, TEXT("Barrel is nullptr."));
@@ -45,7 +29,8 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	const auto ActorsToIgnore = TArray<AActor*>();
 
 	// Calculates the suggested projectile velocity.
-	if (UGameplayStatics::SuggestProjectileVelocity(
+	const bool bHasProjectileVelocity = UGameplayStatics::SuggestProjectileVelocity
+	(
 		this,
 		OutLaunchVelocity,
 		StartLocation,
@@ -57,13 +42,38 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 		ESuggestProjVelocityTraceOption::DoNotTrace,
 		FCollisionResponseParams::DefaultResponseParam,
 		ActorsToIgnore,
-		false)
-		)
+		false
+	);
+
+	if (bHasProjectileVelocity)
 	{
 		// Stores normalized version of the suggested LaunchVelocity.
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 
 		const FString ParentActorName = GetOwner()->GetName();
 		UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
+
+		RotateBarrelTowards(AimDirection);
 	}
+}
+
+void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
+{
+	// TODO: Rotate barrel.
+		// Use barrel for yaw (y-rotation).
+	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
+	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
+
+	UE_LOG(LogTemp, Warning, TEXT("DeltaRotator : %s"), *DeltaRotator.ToString());
+
+	// Translate AimDirection into y-rotation.
+
+	// Apply the right y-rotation-amount, this frame, to barrel.
+	// Taking into account max elevation speed and this frame time.
+	const auto RotationSpeed = 2.0f;
+	Barrel->AddLocalRotation(DeltaRotator * RotationSpeed * FApp::GetDeltaTime());
+
+	// Use turret for pitch (z-rotation).
+	// Translate AimDirection into z-rotation.
+	// Apply z-toration to turret.
 }
