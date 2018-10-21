@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h" // Should be first include.
-
 #include "GameFramework/Pawn.h"
-#include "TankAimingComponent.h"
-
 #include "Tank.generated.h" // Must be last include.
+
+#pragma region Forward Declarations
+class UTankAimingComponent;
+#pragma endregion
 
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn

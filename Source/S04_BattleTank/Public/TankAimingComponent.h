@@ -3,13 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h" // Should be first include.
-
-#include "Components/ActorComponent.h"
-#include "Components/StaticMeshComponent.h"
-#include "GameFramework/Actor.h"
-#include "Kismet/GameplayStatics.h"
-#include "Misc/App.h"
-
 #include "TankAimingComponent.generated.h" // Must be the last include.
 
 #pragma region Forward Declarations

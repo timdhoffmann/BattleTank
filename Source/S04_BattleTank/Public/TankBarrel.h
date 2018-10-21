@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h" // Should be first include.
-
 #include "Components/StaticMeshComponent.h"
-
 #include "TankBarrel.generated.h"// Must be the last include!
 
 /**
