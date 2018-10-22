@@ -6,16 +6,19 @@
 #include "Components/StaticMeshComponent.h"
 #include "TankBarrel.generated.h"// Must be the last include!
 
-/**
- *
- */
+#pragma region Forward Declarations
+class UWorld;
+#pragma endregion
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class S04_BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 
 public:
-	void Elevate(float DegreesPerSecond) const;
+	/// Elevates the barrel.
+	/// -1 is max downward speed, +1 is max upward speed.
+	void Elevate(float NormalizedRelativeSpeed) const;
 
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
