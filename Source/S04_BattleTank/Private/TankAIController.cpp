@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankAIController.h"
+#include "Engine/World.h"
+#include "Tank.h"
 
 #pragma region Overrides
 
@@ -28,7 +30,6 @@ void ATankAIController::Tick(float DeltaSeconds)
 }
 #pragma endregion
 
-
 /// Gets the tank controlled by this object.
 ATank* ATankAIController::GetControlledPawn() const
 {
@@ -39,6 +40,6 @@ ATank* ATankAIController::GetControlledPawn() const
 ATank * ATankAIController::GetPlayerPawn() const
 {
 	const auto PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
-	
+
 	return Cast<ATank>(PlayerPawn);
 }

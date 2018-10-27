@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "AIController.h"
-#include "Engine/World.h"
-#include "Tank.h"
 #include "TankAIController.generated.h"
 
+#pragma region Forward Declarations
+class ATank;
+#pragma endregion
+
 /**
- * 
+ *
  */
 UCLASS()
 class S04_BATTLETANK_API ATankAIController : public AAIController
@@ -19,8 +20,7 @@ class S04_BATTLETANK_API ATankAIController : public AAIController
 
 public:
 	/// Functions:
-	
-	
+
 private:
 	/// Variables:
 

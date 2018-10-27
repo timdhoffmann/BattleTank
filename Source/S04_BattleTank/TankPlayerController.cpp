@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankPlayerController.h"
+#include "Engine/World.h"
+#include "Tank.h"
 
 #pragma region Overrides
 // Called when the game starts.
@@ -25,7 +27,6 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 }
 #pragma endregion
 
-
 void ATankPlayerController::AimAtCrosshair() const
 {
 	ensure(ControlledTank);
@@ -35,7 +36,7 @@ void ATankPlayerController::AimAtCrosshair() const
 	{
 		ControlledTank->AimAt(HitLocation);
 		// TODO: If it hits the landscape...
-		// Tell controlled tank to aim at this point. 
+		// Tell controlled tank to aim at this point.
 	}
 }
 
@@ -49,8 +50,8 @@ ATank* ATankPlayerController::GetControlledPawn() const
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
 {
 	// TODO: Does this happen?:
-	// 1. Find crosshair position in pixel coordinates. 
-	// 2. De-project screen position of crosshair to a world direction. 
+	// 1. Find crosshair position in pixel coordinates.
+	// 2. De-project screen position of crosshair to a world direction.
 	// 3. Line trace along that look direction and see what we hit.
 
 	// Get aim direction unit vector.
@@ -100,9 +101,9 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 
 	/// Execute LineTrace (Ray-cast).
 	if (GetWorld()->LineTraceSingleByChannel(
-			HitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
-			)
+		HitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
 	)
+		)
 	{
 		OutHitLocation = HitResult.ImpactPoint;
 

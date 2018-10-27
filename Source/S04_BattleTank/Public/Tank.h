@@ -2,9 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "CoreMinimal.h" // Should be first include.
 #include "GameFramework/Pawn.h"
-#include "Tank.generated.h"
+#include "Tank.generated.h" // Must be last include.
+
+#pragma region Forward Declarations
+class UTankAimingComponent;
+#pragma endregion
 
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn
@@ -18,8 +22,22 @@ public:
 	// Sets default values for this pawn's properties
 	ATank();
 
+	UFUNCTION(BlueprintCallable, Category = Setup)
+		void SetBarrelReference(UTankBarrel* BarrelToSet) const;
+
 	// Aims at a target location.
-	void AimAt(FVector TargetLocation) const;
+	void AimAt(const FVector TargetLocation) const;
+
+	/// Variables;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Firing)
+		float LaunchSpeed = 10e3f;
+
+protected:
+
+	/// Variables:
+
+	// The Actor Component responsible for aiming.
+	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
 
@@ -27,9 +45,6 @@ private:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
