@@ -31,6 +31,7 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	FVector OutLaunchVelocity(0);
 	const FVector StartLocation = Barrel->GetSocketLocation("ProjectileStart");
 	const auto ActorsToIgnore = TArray<AActor*>();
+	const auto bDrawDebug = false;
 
 	// Calculates the suggested projectile velocity.
 	const bool bHasProjectileVelocity = UGameplayStatics::SuggestProjectileVelocity
@@ -46,7 +47,7 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 		ESuggestProjVelocityTraceOption::DoNotTrace,
 		FCollisionResponseParams::DefaultResponseParam,
 		ActorsToIgnore,
-		false
+		bDrawDebug
 	);
 
 	if (bHasProjectileVelocity)
@@ -63,15 +64,13 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 
 void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 {
-	// TODO: Rotate barrel.
-		// Use barrel for yaw (y-rotation).
+	// TODO: RotatePitch barrel.
+	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
 
-	// Translate AimDirection into y-rotation.
-
-	// TODO: remove magic number.
-	Barrel->Elevate(1);
+	// Translates AimDirection into pitch.
+	Barrel->RotatePitch(DeltaRotator.Pitch);
 
 	// Use turret for pitch (z-rotation).
 	// Translate AimDirection into z-rotation.

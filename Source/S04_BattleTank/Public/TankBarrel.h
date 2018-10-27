@@ -18,13 +18,13 @@ class S04_BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 public:
 	/// Elevates the barrel.
 	/// -1 is max downward speed, +1 is max upward speed.
-	void Elevate(float NormalizedRelativeSpeed) const;
+	void RotatePitch(float AxisRelativeSpeed);
 
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
-		float MaxElevationSpeedDegreesPerSecond = 20.0f;
+		float MaxRotationSpeedDegreesPerSecond = 5.f;
 	UPROPERTY(EditAnywhere, Category = Setup)
-		float MinElevationDegrees = 0.0f;
+		float MinPitchAngle = 0.0f;
 	UPROPERTY(EditAnywhere, Category = Setup)
-		float MaxElevationDegrees = 35.0f;
+		float MaxPitchAngle = 35.0f;
 };

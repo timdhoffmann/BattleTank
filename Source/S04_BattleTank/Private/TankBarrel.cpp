@@ -3,14 +3,17 @@
 #include "TankBarrel.h"
 #include "Engine/World.h"
 
-void UTankBarrel::Elevate(const float NormalizedRelativeSpeed) const
+// Applies the pitch rotation, this frame, to barrel.
+// Taking into account max elevation speed and this frame time.
+void UTankBarrel::RotatePitch(float AxisRelativeSpeed)
 {
-	// Apply the right y-rotation-amount, this frame, to barrel.
-	// Taking into account max elevation speed and this frame time.
+	AxisRelativeSpeed = FMath::Clamp(AxisRelativeSpeed, -1.f, 1.f);
 
-	/*const auto RotationSpeed = 2.0f;
-	Barrel->AddLocalRotation(DeltaRotator * RotationSpeed * FApp::GetDeltaTime());*/
+	const auto DeltaPitch = AxisRelativeSpeed * MaxRotationSpeedDegreesPerSecond * GetWorld()->GetDeltaSeconds();
+	const auto NewPitch = FMath::Clamp(RelativeRotation.Pitch + DeltaPitch, MinPitchAngle, MaxPitchAngle);
 
-	auto Time = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("[%f] Elevating at: %f degrees per second"), Time, NormalizedRelativeSpeed);
+	SetRelativeRotation(FRotator(NewPitch, 0.f, 0.f));
+
+	const auto Time = GetWorld()->GetTimeSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("[%f] Rotating pitch at: %f degrees per second"), Time, AxisRelativeSpeed);
 }
