@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Kismet/GameplayStatics.h"
 #include "TankAimingComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
 
 // Sets default values for this component's properties
@@ -71,7 +71,7 @@ void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 	// Translate AimDirection into y-rotation.
 
 	// TODO: remove magic number.
-	Barrel->Elevate(5);
+	Barrel->Elevate(1);
 
 	// Use turret for pitch (z-rotation).
 	// Translate AimDirection into z-rotation.
