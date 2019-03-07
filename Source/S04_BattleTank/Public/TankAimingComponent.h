@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h" // Should be first include.
+#include "Components/ActorComponent.h"
 #include "TankAimingComponent.generated.h" // Must be the last include.
 
 #pragma region Forward Declarations
@@ -22,7 +23,7 @@ public:
 
 	void SetBarrelReference(UTankBarrel* BarrelToSet);
 
-	// TODO: Add SetTurretReference().
+	void SetTurretReference(class UTankTurret* TurretToSet);
 
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation, const float LaunchSpeed) const;
@@ -31,6 +32,8 @@ public:
 private:
 #pragma region Variables
 	UTankBarrel* Barrel = nullptr;
+
+	UTankTurret* Turret = nullptr;
 #pragma endregion
 
 #pragma region Functions

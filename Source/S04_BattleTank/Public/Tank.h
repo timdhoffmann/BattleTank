@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetBarrelReference(UTankBarrel* BarrelToSet) const;
 
+	UFUNCTION(BlueprintCallable, Category = Setup)
+		void SetTurretReference(UTankTurret* TurretToSet) const;
+
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
 
@@ -36,7 +39,7 @@ protected:
 
 	/// Variables:
 
-	// The Actor Component responsible for aiming.
+	// The Component responsible for aiming.
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:

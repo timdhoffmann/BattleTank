@@ -23,8 +23,10 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float MaxRotationSpeedDegreesPerSecond = 5.f;
+
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float MinPitchAngle = 0.0f;
+
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float MaxPitchAngle = 35.0f;
 };

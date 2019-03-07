@@ -22,6 +22,12 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
 }
 
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
+	ensureMsgf(Turret != nullptr, TEXT("Turret reference not found."));
+}
+
 void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
 {
 	ensureMsgf(Barrel != nullptr, TEXT("Barrel is nullptr."));
