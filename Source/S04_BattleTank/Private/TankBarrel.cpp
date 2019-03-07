@@ -15,5 +15,5 @@ void UTankBarrel::RotatePitch(float AxisRelativeSpeed)
 	SetRelativeRotation(FRotator(NewPitch, 0.f, 0.f));
 
 	const auto Time = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("[%f] Rotating pitch at: %f degrees per second"), Time, AxisRelativeSpeed);
+	//UE_LOG(LogTemp, Warning, TEXT("[%f] Rotating pitch at: %f degrees per second"), Time, AxisRelativeSpeed);
 }

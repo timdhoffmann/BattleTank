@@ -14,4 +14,13 @@ UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class S04_BATTLETANK_API UTankTurret : public UStaticMeshComponent
 {
 	GENERATED_BODY()
+
+public:
+	/// Elevates the barrel.
+	/// -1 is max clockwise speed, +1 is max counter-clockwise speed.
+	void RotateYaw(float AxisRelativeSpeed);
+
+private:
+	UPROPERTY(EditAnywhere, Category = Setup)
+		float MaxRotationSpeedDegreesPerSecond = 5.f;
 };

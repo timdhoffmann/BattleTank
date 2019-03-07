@@ -3,6 +3,7 @@
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -65,12 +66,13 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 		UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
 
 		RotateBarrelTowards(AimDirection);
+
+		RotateTurretTowards(AimDirection);
 	}
 }
 
 void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 {
-	// TODO: RotatePitch barrel.
 	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
@@ -78,7 +80,20 @@ void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 	// Translates AimDirection into pitch.
 	Barrel->RotatePitch(DeltaRotator.Pitch);
 
-	// Use turret for pitch (z-rotation).
-	// Translate AimDirection into z-rotation.
-	// Apply z-toration to turret.
+	//// Uses turret for yaw rotation.
+	//const auto TurretRotator = Turret->RelativeRotation.;
+	//const auto DeltaTurretRotator = Direction.Rotation() - TurretRotator;
+
+	//// Translates AimDirection into yaw.
+	//Turret->RotateYaw(DeltaTurretRotator.Yaw);
+}
+
+void UTankAimingComponent::RotateTurretTowards(FVector Direction) const
+{
+	// Uses turret for yaw rotation.
+	const auto TurretRotator = Turret->GetUpVector().Rotation();
+	const auto DeltaRotator = Direction.Rotation() - TurretRotator;
+
+	// Translates AimDirection into yaw.
+	Turret->RotateYaw(DeltaRotator.Yaw);
 }

@@ -38,5 +38,7 @@ private:
 
 #pragma region Functions
 	void RotateBarrelTowards(FVector Direction) const;
+
+	void RotateTurretTowards(FVector Direction) const;
 #pragma endregion
 };
