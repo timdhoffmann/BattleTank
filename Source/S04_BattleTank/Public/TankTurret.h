@@ -10,7 +10,7 @@
 /**
  *
  */
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) // Makes the component appear in the "add component" blueprint menu.
 class S04_BATTLETANK_API UTankTurret : public UStaticMeshComponent
 {
 	GENERATED_BODY()
@@ -22,5 +22,5 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
-		float MaxRotationSpeedDegreesPerSecond = 5.f;
+		float MaxRotationSpeedDegreesPerSecond = 20.f;
 };

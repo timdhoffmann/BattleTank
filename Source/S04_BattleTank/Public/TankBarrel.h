@@ -10,7 +10,7 @@
 class UWorld;
 #pragma endregion
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) // Makes the component appear in the "add component" blueprint menu.
 class S04_BATTLETANK_API UTankBarrel : public UStaticMeshComponent
 {
 	GENERATED_BODY()
@@ -23,10 +23,8 @@ public:
 private:
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float MaxRotationSpeedDegreesPerSecond = 5.f;
-
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float MinPitchAngle = 0.0f;
-
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float MaxPitchAngle = 35.0f;
 };

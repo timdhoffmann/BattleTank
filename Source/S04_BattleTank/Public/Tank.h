@@ -17,35 +17,28 @@ class S04_BATTLETANK_API ATank : public APawn
 
 public:
 
-	/// Functions:
+#pragma region Variables
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Firing)
+		float LaunchSpeed = 4e3f;
+#pragma endregion
 
+#pragma region Functions
 	// Sets default values for this pawn's properties
 	ATank();
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetBarrelReference(UTankBarrel* BarrelToSet) const;
-
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetTurretReference(UTankTurret* TurretToSet) const;
-
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
-
-	/// Variables;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Firing)
-		float LaunchSpeed = 10e3f;
+#pragma endregion
 
 protected:
-
-	/// Variables:
-
 	// The Component responsible for aiming.
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
-
-	/// Functions:
-
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
