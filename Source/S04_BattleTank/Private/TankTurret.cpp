@@ -10,10 +10,10 @@ void UTankTurret::RotateYaw(float AxisRelativeSpeed)
 	AxisRelativeSpeed = FMath::Clamp(AxisRelativeSpeed, -1.f, 1.f);
 
 	const auto DeltaYaw = AxisRelativeSpeed * MaxRotationSpeedDegreesPerSecond * GetWorld()->GetDeltaSeconds();
-	const auto NewYaw = RelativeRotation.Yaw + DeltaYaw * (-1);
+	const auto NewYaw = RelativeRotation.Yaw + DeltaYaw;
 
-	SetRelativeRotation(FRotator(0.f, NewYaw, 0.f));
+	SetRelativeRotation(FRotator(0.f, NewYaw, 0.f), false, nullptr, ETeleportType::None);
 
 	const auto Time = GetWorld()->GetTimeSeconds();
-	UE_LOG(LogTemp, Warning, TEXT("[%f] Rotating yaw at: %f degrees per second"), Time, AxisRelativeSpeed);
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Rotating yaw at: %f degrees per second"), *GetOwner()->GetName(), AxisRelativeSpeed);
 }

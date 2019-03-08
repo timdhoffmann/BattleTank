@@ -60,19 +60,18 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	if (bHasProjectileVelocity)
 	{
 		// Stores normalized version of the suggested LaunchVelocity.
-		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		auto const AimDirection = OutLaunchVelocity.GetSafeNormal();
 
-		const FString ParentActorName = GetOwner()->GetName();
-		UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
+		const auto ParentActorName = GetOwner()->GetName();
+		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
 
-		RotateBarrelTowards(AimDirection);
-
-		RotateTurretTowards(AimDirection);
+		RotateTurretAndBarrelTowards(AimDirection);
 	}
 }
 
-void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
+void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
 {
+	/// Rotates the barrel (pitch).
 	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
@@ -80,20 +79,13 @@ void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 	// Translates AimDirection into pitch.
 	Barrel->RotatePitch(DeltaRotator.Pitch);
 
-	//// Uses turret for yaw rotation.
-	//const auto TurretRotator = Turret->RelativeRotation.;
-	//const auto DeltaTurretRotator = Direction.Rotation() - TurretRotator;
-
-	//// Translates AimDirection into yaw.
-	//Turret->RotateYaw(DeltaTurretRotator.Yaw);
-}
-
-void UTankAimingComponent::RotateTurretTowards(FVector Direction) const
-{
-	// Uses turret for yaw rotation.
-	const auto TurretRotator = Turret->GetUpVector().Rotation();
-	const auto DeltaRotator = Direction.Rotation() - TurretRotator;
-
-	// Translates AimDirection into yaw.
-	Turret->RotateYaw(DeltaRotator.Yaw);
+	/// Rotates the Turret (yaw).
+	if (FMath::Abs(DeltaRotator.Yaw) < 180)
+	{
+		Turret->RotateYaw(DeltaRotator.Yaw);
+	}
+	else // Avoid going the long-way round
+	{
+		Turret->RotateYaw(-DeltaRotator.Yaw);
+	}
 }
