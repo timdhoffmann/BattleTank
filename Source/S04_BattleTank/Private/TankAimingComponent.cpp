@@ -68,6 +68,11 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	}
 }
 
+void UTankAimingComponent::Fire() const
+{
+	UE_LOG(LogTemp, Warning, TEXT("Fireing."));
+}
+
 void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
 {
 	/// Rotates the barrel (pitch).

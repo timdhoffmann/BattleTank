@@ -32,6 +32,8 @@ public:
 		void SetTurretReference(UTankTurret* TurretToSet) const;
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
+	UFUNCTION(BlueprintCallable, Category = "Input")
+		void Fire() const;
 #pragma endregion
 
 protected:

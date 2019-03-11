@@ -42,3 +42,8 @@ void ATank::AimAt(const FVector TargetLocation) const
 {
 	TankAimingComponent->AimAt(TargetLocation, LaunchSpeed);
 }
+
+void ATank::Fire() const
+{
+	TankAimingComponent->Fire();
+}
