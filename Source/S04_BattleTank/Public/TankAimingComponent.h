@@ -24,7 +24,6 @@ public:
 	void SetTurretReference(class UTankTurret* TurretToSet);
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation, const float LaunchSpeed) const;
-	void Fire() const;
 #pragma endregion
 
 private:
