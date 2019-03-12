@@ -27,7 +27,7 @@ public:
 	ATank();
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetBarrelReference(UTankBarrel* BarrelToSet) const;
+		void SetBarrelReference(UTankBarrel* BarrelToSet);
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetTurretReference(UTankTurret* TurretToSet) const;
 	// Aims at a target location.
@@ -41,9 +41,18 @@ protected:
 	UTankAimingComponent* TankAimingComponent = nullptr;
 
 private:
+#pragma region Functions
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+#pragma endregion
+
+#pragma region Variables
+	UPROPERTY(EditAnywhere, Category = Setup)
+		TSubclassOf<class AProjectile> ProjectileBP;
+	// Barrel reference for spawning projectile.
+	UTankBarrel* Barrel = nullptr;
+#pragma endregion
 };

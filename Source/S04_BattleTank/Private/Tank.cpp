@@ -22,9 +22,10 @@ void ATank::BeginPlay()
 }
 #pragma endregion
 
-void ATank::SetBarrelReference(UTankBarrel* BarrelToSet) const
+void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimingComponent->SetBarrelReference(BarrelToSet);
+	Barrel = BarrelToSet;
 }
 
 void ATank::SetTurretReference(UTankTurret * TurretToSet) const
@@ -45,5 +46,8 @@ void ATank::AimAt(const FVector TargetLocation) const
 
 void ATank::Fire() const
 {
-	TankAimingComponent->Fire();
+	if (ensure(Barrel != nullptr))
+	{
+		TankAimingComponent->Fire();
+	}
 }
