@@ -51,11 +51,13 @@ void ATank::Fire() const
 {
 	if (ensure(Barrel != nullptr))
 	{
-		// Handle firing.
-		GetWorld()->SpawnActor<AProjectile>(
+		// Spawns a Projectile.
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
 			ProjectileBP,
 			Barrel->GetSocketLocation("ProjectileStart"),
 			Barrel->GetSocketRotation("ProjectileStart")
 			);
+
+		Projectile->LaunchProjectile(LaunchSpeed);
 	}
 }

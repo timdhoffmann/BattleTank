@@ -10,6 +10,7 @@ AProjectile::AProjectile()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
+	// Prevents objectile from flying off immediately.
 	ProjectileMovementComponent->bAutoActivate = false;
 }
 
@@ -23,4 +24,13 @@ void AProjectile::BeginPlay()
 void AProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AProjectile::LaunchProjectile(float Speed)
+{
+	ProjectileMovementComponent->SetVelocityInLocalSpace(FVector::ForwardVector * Speed);
+
+	ProjectileMovementComponent->Activate();
+
+	UE_LOG(LogTemp, Warning, TEXT("Launched projectile at speed %f"), Speed);
 }
