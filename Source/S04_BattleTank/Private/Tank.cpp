@@ -49,18 +49,18 @@ void ATank::AimAt(const FVector TargetLocation) const
 
 void ATank::Fire()
 {
-	bool bIsReloaded = (FPlatformTime::Seconds() - LastFireTime) > ReloadTimeSeconds;
+	bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
 
-	//if (ensure(Barrel != nullptr) && bIsReloaded)
-	//{
-	//	// Spawns a Projectile.
-	//	auto Projectile = GetWorld()->SpawnActor<AProjectile>(
-	//		ProjectileBP,
-	//		Barrel->GetSocketLocation("ProjectileStart"),
-	//		Barrel->GetSocketRotation("ProjectileStart")
-	//		);
+	if (ensure(Barrel != nullptr) && bIsReloaded)
+	{
+		// Spawns a Projectile.
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBP,
+			Barrel->GetSocketLocation("ProjectileStart"),
+			Barrel->GetSocketRotation("ProjectileStart")
+			);
 
-	//	Projectile->LaunchProjectile(LaunchSpeed);
-	//	LastFireTime = FPlatformTime::Seconds();
-	//}
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = GetWorld()->GetTimeSeconds();
+	}
 }

@@ -54,7 +54,7 @@ private:
 		TSubclassOf<class AProjectile> ProjectileBP;
 	UPROPERTY(EditAnywhere, Category = Setup)
 		float ReloadTimeSeconds = 3.0f;
-	double LastFireTime = 0;
+	float LastFireTime = 0.0f;
 	// Barrel reference for spawning projectile.
 	UTankBarrel* Barrel = nullptr;
 #pragma endregion
