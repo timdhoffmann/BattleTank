@@ -33,7 +33,7 @@ public:
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
 	UFUNCTION(BlueprintCallable, Category = "Input")
-		void Fire() const;
+		void Fire();
 #pragma endregion
 
 protected:
@@ -52,6 +52,9 @@ private:
 #pragma region Variables
 	UPROPERTY(EditAnywhere, Category = Setup)
 		TSubclassOf<class AProjectile> ProjectileBP;
+	UPROPERTY(EditAnywhere, Category = Setup)
+		float ReloadTimeSeconds = 3.0f;
+	double LastFireTime = 0;
 	// Barrel reference for spawning projectile.
 	UTankBarrel* Barrel = nullptr;
 #pragma endregion
