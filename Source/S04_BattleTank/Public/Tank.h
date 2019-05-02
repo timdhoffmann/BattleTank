@@ -18,7 +18,7 @@ class S04_BATTLETANK_API ATank : public APawn
 public:
 
 #pragma region Variables
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Firing)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Firing)
 		float LaunchSpeed = 4e3f;
 #pragma endregion
 
@@ -50,9 +50,9 @@ private:
 #pragma endregion
 
 #pragma region Variables
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		TSubclassOf<class AProjectile> ProjectileBP;
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float ReloadTimeSeconds = 3.0f;
 	float LastFireTime = 0.0f;
 	// Barrel reference for spawning projectile.

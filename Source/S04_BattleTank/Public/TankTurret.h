@@ -21,6 +21,6 @@ public:
 	void RotateYaw(float AxisRelativeSpeed);
 
 private:
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float MaxRotationSpeedDegreesPerSecond = 20.f;
 };
