@@ -4,6 +4,7 @@
 #include "TankBarrel.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
+#include "TankNavMovementComponent.h"
 #include "Projectile.h"
 
 // Sets default values
@@ -14,6 +15,7 @@ ATank::ATank()
 
 	// No need to protect pointers here, as they are added at construction.
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>("AimingComponent");
+	TankNavMovementComponent = CreateDefaultSubobject<UTankNavMovementComponent>("TankNavMovementComponent");
 }
 
 #pragma region Overrides
@@ -31,7 +33,7 @@ void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 	Barrel = BarrelToSet;
 }
 
-void ATank::SetTurretReference(UTankTurret * TurretToSet) const
+void ATank::SetTurretReference(UTankTurret* TurretToSet) const
 {
 	TankAimingComponent->SetTurretReference(TurretToSet);
 }

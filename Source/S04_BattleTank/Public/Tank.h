@@ -10,6 +10,7 @@
 class UTankTurret;
 class UTankBarrel;
 class UTankAimingComponent;
+class UTankNavMovementComponent;
 #pragma endregion
 
 UCLASS()
@@ -27,6 +28,9 @@ public:
 protected:
 	// The Component responsible for aiming.
 	UTankAimingComponent* TankAimingComponent = nullptr;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement)
+		UTankNavMovementComponent* TankNavMovementComponent = nullptr;
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
@@ -52,7 +56,7 @@ public:
 		void SetTurretReference(UTankTurret* TurretToSet) const;
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
-	UFUNCTION(BlueprintCallable, Category = "Input")
+	UFUNCTION(BlueprintCallable, Category = Input)
 		void Fire();
 
 private:
