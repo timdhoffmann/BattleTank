@@ -15,11 +15,14 @@ class S04_BATTLETANK_API UTankTrack : public UStaticMeshComponent
 	GENERATED_BODY()
 
 public:
+
 #pragma region Functions
 	// Sets the throttle on a single track.
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void SetThrottle(float Throttle) const;
 #pragma endregion
+
+private:
 
 #pragma region Variables
 	// Max force per track in Newtons.
