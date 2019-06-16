@@ -15,7 +15,6 @@ ATank::ATank()
 
 	// No need to protect pointers here, as they are added at construction.
 	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>("AimingComponent");
-	TankNavMovementComponent = CreateDefaultSubobject<UTankNavMovementComponent>("TankNavMovementComponent");
 }
 
 #pragma region Overrides
