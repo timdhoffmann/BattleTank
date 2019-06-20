@@ -1,7 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Tank.h"
+#include "TankBarrel.h"
+#include "Engine/World.h"
 #include "TankAimingComponent.h"
+#include "TankNavMovementComponent.h"
+#include "Projectile.h"
 
 // Sets default values
 ATank::ATank()
@@ -22,9 +26,15 @@ void ATank::BeginPlay()
 }
 #pragma endregion
 
-void ATank::SetBarrelReference(UTankBarrel* BarrelToSet) const
+void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	TankAimingComponent->SetBarrelReference(BarrelToSet);
+	Barrel = BarrelToSet;
+}
+
+void ATank::SetTurretReference(UTankTurret* TurretToSet) const
+{
+	TankAimingComponent->SetTurretReference(TurretToSet);
 }
 
 // Called to bind functionality to input
@@ -36,4 +46,22 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::AimAt(const FVector TargetLocation) const
 {
 	TankAimingComponent->AimAt(TargetLocation, LaunchSpeed);
+}
+
+void ATank::Fire()
+{
+	bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
+
+	if (ensure(Barrel != nullptr) && bIsReloaded)
+	{
+		// Spawns a Projectile.
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBP,
+			Barrel->GetSocketLocation("ProjectileStart"),
+			Barrel->GetSocketRotation("ProjectileStart")
+			);
+
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = GetWorld()->GetTimeSeconds();
+	}
 }

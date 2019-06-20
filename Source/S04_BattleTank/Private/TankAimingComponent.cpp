@@ -3,6 +3,7 @@
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -10,8 +11,7 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-	// TODO: Should this really tick?
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -20,6 +20,12 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 {
 	Barrel = BarrelToSet;
 	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
+}
+
+void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+{
+	Turret = TurretToSet;
+	ensureMsgf(Turret != nullptr, TEXT("Turret reference not found."));
 }
 
 void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
@@ -53,18 +59,18 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	if (bHasProjectileVelocity)
 	{
 		// Stores normalized version of the suggested LaunchVelocity.
-		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
+		auto const AimDirection = OutLaunchVelocity.GetSafeNormal();
 
-		const FString ParentActorName = GetOwner()->GetName();
-		UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
+		const auto ParentActorName = GetOwner()->GetName();
+		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
 
-		RotateBarrelTowards(AimDirection);
+		RotateTurretAndBarrelTowards(AimDirection);
 	}
 }
 
-void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
+void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
 {
-	// TODO: RotatePitch barrel.
+	/// Rotates the barrel (pitch).
 	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
@@ -72,7 +78,13 @@ void UTankAimingComponent::RotateBarrelTowards(FVector Direction) const
 	// Translates AimDirection into pitch.
 	Barrel->RotatePitch(DeltaRotator.Pitch);
 
-	// Use turret for pitch (z-rotation).
-	// Translate AimDirection into z-rotation.
-	// Apply z-toration to turret.
+	/// Rotates the Turret (yaw).
+	if (FMath::Abs(DeltaRotator.Yaw) < 180)
+	{
+		Turret->RotateYaw(DeltaRotator.Yaw);
+	}
+	else // Avoid going the long-way round
+	{
+		Turret->RotateYaw(-DeltaRotator.Yaw);
+	}
 }

@@ -21,13 +21,13 @@ class S04_BATTLETANK_API ATankPlayerController : public APlayerController
 private:
 #pragma region Variables
 	/// Variables:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 		float CrosshairXLocation = 0.5f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 		float CrosshairYLocation = 0.33333f;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 		int32 AimLineTraceRangeKm = 10;
 
 	// The Tank controlled by the player.
