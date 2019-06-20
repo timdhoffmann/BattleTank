@@ -7,7 +7,6 @@ void UTankTrack::SetThrottle(const float Throttle) const
 	// TODO: Clamp throttle value between -1 and 1.
 
 	const auto Name = GetName();
-	UE_LOG(LogTemp, Warning, TEXT("%s throttle: %f"), *Name, Throttle);
 
 	const auto ForceApplied = GetForwardVector() * MaxDrivingForce * Throttle;
 

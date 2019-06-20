@@ -32,5 +32,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void IntendMoveForward(float Throw);
 
+	UFUNCTION(BlueprintCallable, Category = Input)
+		void IntendTurnRight(float Throw);
+
 #pragma endregion
 };

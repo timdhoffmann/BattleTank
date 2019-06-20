@@ -14,9 +14,22 @@ void UTankNavMovementComponent::Init(UTankTrack* LeftTrackToSet, UTankTrack* Rig
 
 void UTankNavMovementComponent::IntendMoveForward(const float Throw)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Indend move forward throw: %f"), Throw);
-
 	// TODO: Prevent double-speed when using multiple input devices.
-	LeftTrack->SetThrottle(Throw);
-	RightTrack->SetThrottle(Throw);
+
+	if (ensure(LeftTrack != nullptr && RightTrack != nullptr))
+	{
+		LeftTrack->SetThrottle(Throw);
+		RightTrack->SetThrottle(Throw);
+	}
+}
+
+void UTankNavMovementComponent::IntendTurnRight(const float Throw)
+{
+	// TODO: Prevent double-speed when using multiple input devices.
+
+	if (ensure(LeftTrack != nullptr && RightTrack != nullptr))
+	{
+		LeftTrack->SetThrottle(Throw);
+		RightTrack->SetThrottle(-Throw);
+	}
 }
