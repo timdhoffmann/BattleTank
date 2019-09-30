@@ -19,11 +19,15 @@ class S04_BATTLETANK_API ATankAIController : public AAIController
 	GENERATED_BODY()
 
 private:
-	/// Functions:
+	// How close can the AI get to the player.
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		float AcceptanceRadiusCm = 300.0f;
 
+#pragma region Functions
 	// Called when the game starts.
 	virtual void BeginPlay() override;
 
 	// Called every frame.
 	virtual void Tick(float DeltaSeconds) override;
+#pragma endregion
 };

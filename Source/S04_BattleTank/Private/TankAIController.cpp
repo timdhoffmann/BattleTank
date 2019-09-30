@@ -2,31 +2,38 @@
 
 #include "TankAIController.h"
 #include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
 #include "Tank.h"
 
 #pragma region Overrides
 
 void ATankAIController::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }
 
 void ATankAIController::Tick(float DeltaSeconds)
 {
-	Super::Tick(DeltaSeconds);
+    Super::Tick(DeltaSeconds);
 
-	ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (PlayerTank != nullptr)
-	{
-		ATank* ControlledTank = Cast<ATank>(GetPawn());
-		ensure(ControlledTank != nullptr);
+    ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
+    if (ensure(PlayerTank != nullptr))
+    {
+        ATank* ControlledTank = Cast<ATank>(GetPawn());
+        ensure(ControlledTank != nullptr);
 
-		//TODO: Move towards the player.
+        // Moves towards the player. Needs AcceptanceRadius!
+        MoveToActor(PlayerTank, AcceptanceRadiusCm);
 
-		ControlledTank->AimAt(PlayerTank->GetActorLocation());
+        // Aims at the player.
+        ControlledTank->AimAt(PlayerTank->GetActorLocation());
 
-		//TODO: Limit fire rate.
-		ControlledTank->Fire();
-	}
+        //TODO: Limit fire rate.
+        ControlledTank->Fire();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("AIController did not find player."));
+    }
 }
 #pragma endregion

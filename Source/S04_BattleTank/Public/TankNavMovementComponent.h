@@ -16,24 +16,31 @@ class S04_BATTLETANK_API UTankNavMovementComponent : public UNavMovementComponen
 {
 	GENERATED_BODY()
 
-#pragma region Variables
-
-		UTankTrack* LeftTrack = nullptr;
-	UTankTrack* RightTrack = nullptr;
-
-#pragma endregion
+public:
 
 #pragma region Functions
 
-public:
+	// TODO: Check best protection.
+	// Requests a new velocity.
+	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
+
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void Init(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);
 
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void IntendMoveForward(float Throw);
+		void IntendMoveForward(float Throw) const;
 
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void IntendTurnRight(float Throw);
+		void IntendTurnRight(float Throw) const;
+
+#pragma endregion
+
+private:
+
+#pragma region Variables
+
+	UTankTrack* LeftTrack = nullptr;
+	UTankTrack* RightTrack = nullptr;
 
 #pragma endregion
 };
