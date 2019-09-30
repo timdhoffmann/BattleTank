@@ -103,3 +103,4 @@ DerivedDataCache/*
 ##########
 
 Content/StarterContent/
+*.code-workspace
