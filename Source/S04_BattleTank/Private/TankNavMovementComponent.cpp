@@ -11,31 +11,29 @@ void UTankNavMovementComponent::RequestDirectMove(const FVector& MoveVelocity, b
 	// No need to call Super. Logic will be replaced.
 
 	const FVector TankForwardVectorNormal = GetOwner()->GetActorForwardVector();
-	// TODO: BUG! Why doesn't this get normalized?
-	const auto MoveVelocityNormal = MoveVelocity.GetSafeNormal(0.0001f);
+
+	// TODO: Why doesn't this work when normalizing with GetSafeNormal()?
+	const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
 
 	// Calculates the ForwardThrow.
 	const float ForwardThrow = FVector::DotProduct(TankForwardVectorNormal, MoveVelocityNormal);
 
-	UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocity: %s"), *GetOwner()->GetName(), *MoveVelocity.ToString());
+	// Applies the ForwardThrow.
+	IntendMoveForward(ForwardThrow);
+
+	/*UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocity: %s"), *GetOwner()->GetName(), *MoveVelocity.ToString());
 	UE_LOG(LogTemp, Warning, TEXT("[%s] TankForwardVectorNormal: %s, MoveVelocityNormal: %s, ForwardThrow: %f"),
 		*GetOwner()->GetName(),
 		*TankForwardVectorNormal.ToString(),
 		*MoveVelocityNormal.ToString(),
 		ForwardThrow);
-	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + MoveVelocityNormal, FColor::Magenta, false, -1, 0, 1);
-
-	// TODO: Remove clamping (only used due to the bug above).
-	// Applies the ForwardThrow.
-	//IntendMoveForward(FMath::Clamp(ForwardThrow, -1.0f, 1.0f));
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + MoveVelocityNormal, FColor::Magenta, false, -1, 0, 1);*/
 
 	// Calculates the IntendTurnRight. Order of vectors matters for CrossProduct!
 	const float RightThrow = FVector::CrossProduct(TankForwardVectorNormal, MoveVelocityNormal).GetClampedToSize(-1.0f, 1.0f).Z;
 
-	// TODO: Remove clamping (only used due to the bug above).
 	// Applies the IntendTurnRight.
 	IntendTurnRight(RightThrow);
-	UE_LOG(LogTemp, Warning, TEXT("[%s] RightThrow: %f"), *GetOwner()->GetName(), RightThrow);
 }
 
 #pragma endregion
