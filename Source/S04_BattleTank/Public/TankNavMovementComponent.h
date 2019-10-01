@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #pragma once
 
@@ -20,10 +20,6 @@ public:
 
 #pragma region Functions
 
-	// TODO: Check best protection.
-	// Requests a new velocity.
-	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
-
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void Init(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);
 
@@ -36,6 +32,13 @@ public:
 #pragma endregion
 
 private:
+
+#pragma region Functions
+
+	// Requests a new velocity from the AIController path finding logic.
+	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
+
+#pragma endregion
 
 #pragma region Variables
 
