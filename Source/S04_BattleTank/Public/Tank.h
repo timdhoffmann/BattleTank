@@ -26,18 +26,24 @@ public:
 		float LaunchSpeed = 4e3f;
 
 protected:
+
 	// The Component responsible for aiming.
-	UTankAimingComponent* TankAimingComponent = nullptr;
+	UPROPERTY(BlueprintReadOnly, Category = Setup)
+		UTankAimingComponent* TankAimingComponent = nullptr;
 
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 		UTankNavMovementComponent* TankNavMovementComponent = nullptr;
 
 private:
+
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		TSubclassOf<class AProjectile> ProjectileBP;
+
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float ReloadTimeSeconds = 3.0f;
+
 	float LastFireTime = 0.0f;
+
 	// Barrel reference for spawning projectile.
 	UTankBarrel* Barrel = nullptr;
 
@@ -52,8 +58,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetBarrelReference(UTankBarrel* BarrelToSet);
+
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void SetTurretReference(UTankTurret* TurretToSet) const;
+
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
 	UFUNCTION(BlueprintCallable, Category = Input)
