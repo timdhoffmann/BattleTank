@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankNavMovementComponent.h"
+#include "DrawDebugHelpers.h"
 #include "TankTrack.h"
 
 #pragma region Overrides
@@ -22,7 +23,10 @@ void UTankNavMovementComponent::RequestDirectMove(const FVector& MoveVelocity, b
 		*MoveVelocityNormal.ToString(),
 		ForwardThrow);
 
-	IntendMoveForward(ForwardThrow);
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + MoveVelocityNormal, FColor::Magenta, false, -1, 0, 1);
+
+	// TODO: Remove clamping (only used due to the bug above.
+	IntendMoveForward(FMath::Clamp(ForwardThrow, 0.f, 1.f));
 }
 
 #pragma endregion
