@@ -10,7 +10,6 @@
 class UTankTurret;
 class UTankBarrel;
 class UTankAimingComponent;
-class UTankNavMovementComponent;
 #pragma endregion
 
 // A Tank that can be controlled by a player or by the AI.
@@ -31,10 +30,6 @@ protected:
 	// The Component responsible for aiming.
 	UPROPERTY(BlueprintReadOnly, Category = Setup)
 		UTankAimingComponent* TankAimingComponent = nullptr;
-
-	// TODO: Not used? Check if can be deleted!
-	UPROPERTY(BlueprintReadOnly, Category = Movement)
-		UTankNavMovementComponent* TankNavMovementComponent = nullptr;
 
 private:
 
