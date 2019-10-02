@@ -11,23 +11,32 @@ void UTankNavMovementComponent::RequestDirectMove(const FVector& MoveVelocity, b
 	// No need to call Super. Logic will be replaced.
 
 	const FVector TankForwardVectorNormal = GetOwner()->GetActorForwardVector();
+	UE_LOG(LogTemp, Warning, TEXT("[%s] TankForwardVectorNormal: %s, IsNormalized: %s"),
+		*GetOwner()->GetName(),
+		*TankForwardVectorNormal.ToString(),
+		TankForwardVectorNormal.IsNormalized() ? TEXT("True") : TEXT("False"));
+
+	UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocity: %s, IsNormalized: %s"),
+		*GetOwner()->GetName(),
+		*MoveVelocity.ToString(),
+		MoveVelocity.IsNormalized() ? TEXT("True") : TEXT("False"));
 
 	// TODO: Why doesn't this work when normalizing with GetSafeNormal()?
+	//const auto MoveVelocityNormal = MoveVelocity.GetSafeNormal();
 	const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
+	UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocityNormal: %s, IsNormalized: %s"),
+		*GetOwner()->GetName(),
+		*MoveVelocityNormal.ToString(),
+		MoveVelocityNormal.IsNormalized() ? TEXT("True") : TEXT("False"));
 
 	// Calculates the ForwardThrow.
 	const float ForwardThrow = FVector::DotProduct(TankForwardVectorNormal, MoveVelocityNormal);
+	UE_LOG(LogTemp, Warning, TEXT("[%s] ForwardThrow: %f"), *GetOwner()->GetName(), ForwardThrow);
+
+	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + MoveVelocityNormal, FColor::Magenta, false, -1, 0, 1);
 
 	// Applies the ForwardThrow.
 	IntendMoveForward(ForwardThrow);
-
-	/*UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocity: %s"), *GetOwner()->GetName(), *MoveVelocity.ToString());
-	UE_LOG(LogTemp, Warning, TEXT("[%s] TankForwardVectorNormal: %s, MoveVelocityNormal: %s, ForwardThrow: %f"),
-		*GetOwner()->GetName(),
-		*TankForwardVectorNormal.ToString(),
-		*MoveVelocityNormal.ToString(),
-		ForwardThrow);
-	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + MoveVelocityNormal, FColor::Magenta, false, -1, 0, 1);*/
 
 	// Calculates the IntendTurnRight. Order of vectors matters for CrossProduct!
 	const float RightThrow = FVector::CrossProduct(TankForwardVectorNormal, MoveVelocityNormal).GetClampedToSize(-1.0f, 1.0f).Z;
