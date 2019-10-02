@@ -7,11 +7,12 @@
 #include "TankPlayerController.generated.h" // Must be the last include!
 
 #pragma region Forward Declarations
+class UTankAimingComponent;
 class ATank;
 #pragma endregion
 
 /**
- *
+ * Controls a tank.
  */
 UCLASS()
 class S04_BATTLETANK_API ATankPlayerController : public APlayerController
@@ -43,6 +44,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		ATank* GetControlledTank() const;
+
+	// Raises an event in blueprint when the aiming component was found.
+	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
+		void FoundAimingComponent(UTankAimingComponent* TankAimingComponentRef); // Needs no definition as a BlueprintImplementableEvent.
 
 private:
 

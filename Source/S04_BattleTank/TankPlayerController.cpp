@@ -3,6 +3,7 @@
 #include "TankPlayerController.h"
 #include "Engine/World.h"
 #include "Tank.h"
+#include "TankAimingComponent.h"
 
 #pragma region Overrides
 // Called when the game starts.
@@ -12,6 +13,12 @@ void ATankPlayerController::BeginPlay()
 
 	ControlledTank = GetControlledTank();
 	ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found."));
+
+	UTankAimingComponent* AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (ensureMsgf(AimingComponent != nullptr, TEXT("No aiming component found.")))
+	{
+		FoundAimingComponent(AimingComponent);
+	}
 }
 
 // Called every frame to update this actor.

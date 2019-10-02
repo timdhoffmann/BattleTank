@@ -25,7 +25,7 @@ class UTankTurret;
 
 #pragma endregion
 
-/// Responsible for handling a tank's aiming.
+/// Handles a tank's aiming.
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent)) // Makes the component appear in the "add component" blueprint menu.
 class S04_BATTLETANK_API UTankAimingComponent : public UActorComponent
 {

@@ -13,6 +13,7 @@ class UTankAimingComponent;
 class UTankNavMovementComponent;
 #pragma endregion
 
+// A Tank that can be controlled by a player or by the AI.
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn
 {
