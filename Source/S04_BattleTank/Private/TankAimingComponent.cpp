@@ -1,9 +1,18 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
+
+#pragma region Overrides
+
+void UTankAimingComponent::InitializeComponent()
+{
+	//SetBarrelReference(GetOwner()->)
+}
+
+#pragma endregion
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -16,16 +25,17 @@ UTankAimingComponent::UTankAimingComponent()
 	// ...
 }
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
+void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference)
 {
-	Barrel = BarrelToSet;
-	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
-}
+	if (ensureMsgf(BarrelReference != nullptr, TEXT("Barrel reference not found.")))
+	{
+		Barrel = BarrelReference;
+	}
 
-void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
-{
-	Turret = TurretToSet;
-	ensureMsgf(Turret != nullptr, TEXT("Turret reference not found."));
+	if (ensureMsgf(TurretReference != nullptr, TEXT("Turret reference not found.")))
+	{
+		Turret = TurretReference;
+	}
 }
 
 void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
@@ -66,6 +76,11 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 
 		RotateTurretAndBarrelTowards(AimDirection);
 	}
+}
+
+UTankBarrel* UTankAimingComponent::GetBarrel() const
+{
+	return Barrel;
 }
 
 void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const

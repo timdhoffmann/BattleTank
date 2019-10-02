@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #pragma once
 
@@ -31,6 +31,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = Setup)
 		UTankAimingComponent* TankAimingComponent = nullptr;
 
+	// TODO: Not used? Check if can be deleted!
 	UPROPERTY(BlueprintReadOnly, Category = Movement)
 		UTankNavMovementComponent* TankNavMovementComponent = nullptr;
 
@@ -44,36 +45,25 @@ private:
 
 	float LastFireTime = 0.0f;
 
-	// Barrel reference for spawning projectile.
-	UTankBarrel* Barrel = nullptr;
-
 #pragma endregion
 
 #pragma region Functions
 
 public:
 
-	// Sets default values for this pawn's properties
-	ATank();
-
-	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	UFUNCTION(BlueprintCallable, Category = Setup)
-		void SetTurretReference(UTankTurret* TurretToSet) const;
-
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation) const;
+
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void Fire();
 
 private:
 
+	// Sets default values for this pawn's properties. Can be private in UE4!
+	ATank();
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 #pragma endregion
 };

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "Tank.h"
 #include "TankBarrel.h"
@@ -12,9 +12,6 @@ ATank::ATank()
 {
 	//Doesn't need to tick every frame.
 	PrimaryActorTick.bCanEverTick = false;
-
-	// No need to protect pointers here, as they are added at construction.
-	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>("AimingComponent");
 }
 
 #pragma region Overrides
@@ -23,25 +20,12 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// TODO: Is this necessary? Maybe the entire BeginPlay() can be deleted?
+	TankAimingComponent = FindComponentByClass<UTankAimingComponent>();
+	ensureMsgf(TankAimingComponent != nullptr, TEXT("No reference to a UTankAimingComponent found!"));
 }
 #pragma endregion
-
-void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
-{
-	TankAimingComponent->SetBarrelReference(BarrelToSet);
-	Barrel = BarrelToSet;
-}
-
-void ATank::SetTurretReference(UTankTurret* TurretToSet) const
-{
-	TankAimingComponent->SetTurretReference(TurretToSet);
-}
-
-// Called to bind functionality to input
-void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
 
 void ATank::AimAt(const FVector TargetLocation) const
 {
@@ -50,9 +34,12 @@ void ATank::AimAt(const FVector TargetLocation) const
 
 void ATank::Fire()
 {
-	bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
+	// Barrel reference for spawning projectile.
+	UTankBarrel* Barrel = TankAimingComponent->GetBarrel();
+	ensure(Barrel != nullptr);
+	const bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
 
-	if (ensure(Barrel != nullptr) && bIsReloaded)
+	if (Barrel != nullptr && bIsReloaded)
 	{
 		// Spawns a Projectile.
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(

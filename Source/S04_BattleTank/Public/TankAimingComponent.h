@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #pragma once
 
@@ -49,17 +49,22 @@ private:
 
 public:
 
-	// Sets default values for this component's properties
-	UTankAimingComponent();
-
-	void SetBarrelReference(UTankBarrel* BarrelToSet);
-
-	void SetTurretReference(UTankTurret* TurretToSet);
+	// Initializes the component's references.
+	UFUNCTION(BlueprintCallable, Category = Setup)
+		void InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference);
 
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation, const float LaunchSpeed) const;
 
+	UTankBarrel* GetBarrel() const;
+
 private:
+
+	// Sets default values for this component's properties. Can be private in UE4!
+	UTankAimingComponent();
+
+	// Called after the owning Actor was created.
+	virtual void InitializeComponent() override;
 
 	void RotateTurretAndBarrelTowards(FVector Direction) const;
 
