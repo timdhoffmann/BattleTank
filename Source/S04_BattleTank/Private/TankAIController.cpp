@@ -1,36 +1,38 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "TankAIController.h"
+#include "TankAimingComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
-#include "Tank.h"
 // Depends on movement component via NavMesh AI system.
 
 #pragma region Overrides
 
 void ATankAIController::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
+
+	AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	ensure(AimingComponent != nullptr);
+
+	Target = GetWorld()->GetFirstPlayerController()->GetPawn();
+	ensureMsgf(Target != nullptr, TEXT("Couldn't find a reference to the player."));
 }
 
 void ATankAIController::Tick(float DeltaSeconds)
 {
-    Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaSeconds);
 
-    ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-    if (ensure(PlayerTank != nullptr))
-    {
-        ATank* ControlledTank = Cast<ATank>(GetPawn());
-        ensure(ControlledTank != nullptr);
+	if (Target != nullptr)
+	{
+		// Moves towards the player. Needs AcceptanceRadius!
+		MoveToActor(Target, AcceptanceRadiusCm);
 
-        // Moves towards the player. Needs AcceptanceRadius!
-        MoveToActor(PlayerTank, AcceptanceRadiusCm);
+		// Aims at the player.
+		AimingComponent->AimAt(Target->GetActorLocation());
 
-        // Aims at the player.
-        ControlledTank->AimAt(PlayerTank->GetActorLocation());
-
-        //TODO: Limit fire rate.
-        ControlledTank->Fire();
-    }
+		// TODO: Limit fire rate.
+		AimingComponent->Fire();
+	}
 }
 #pragma endregion

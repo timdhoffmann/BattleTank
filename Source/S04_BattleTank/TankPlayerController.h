@@ -8,7 +8,6 @@
 
 #pragma region Forward Declarations
 class UTankAimingComponent;
-class ATank;
 #pragma endregion
 
 /**
@@ -33,8 +32,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 		int32 AimLineTraceRangeKm = 10;
 
-	// The Tank controlled by the player.
-	const ATank* ControlledTank = nullptr;
+	const UTankAimingComponent* AimingComponent = nullptr;
 
 #pragma endregion
 
@@ -42,12 +40,9 @@ private:
 
 protected:
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
-		ATank* GetControlledTank() const;
-
 	// Raises an event in blueprint when the aiming component was found.
 	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
-		void FoundAimingComponent(UTankAimingComponent* TankAimingComponentRef); // Needs no definition as a BlueprintImplementableEvent.
+		void FoundAimingComponent(const UTankAimingComponent* TankAimingComponentRef) const; // Needs no definition as a BlueprintImplementableEvent.
 
 private:
 

@@ -16,9 +16,18 @@ class S04_BATTLETANK_API UTankNavMovementComponent : public UNavMovementComponen
 {
 	GENERATED_BODY()
 
-public:
+#pragma region Variables
+
+private:
+
+	UTankTrack* LeftTrack = nullptr;
+	UTankTrack* RightTrack = nullptr;
+
+#pragma endregion
 
 #pragma region Functions
+
+public:
 
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void Init(UTankTrack* LeftTrackToSet, UTankTrack* RightTrackToSet);
@@ -29,21 +38,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void IntendTurnRight(float Throw) const;
 
-#pragma endregion
-
 private:
-
-#pragma region Functions
 
 	// Requests a new velocity from the AIController path finding logic.
 	virtual void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;
-
-#pragma endregion
-
-#pragma region Variables
-
-	UTankTrack* LeftTrack = nullptr;
-	UTankTrack* RightTrack = nullptr;
 
 #pragma endregion
 };

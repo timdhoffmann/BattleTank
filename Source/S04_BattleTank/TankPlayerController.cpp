@@ -2,7 +2,6 @@
 
 #include "TankPlayerController.h"
 #include "Engine/World.h"
-#include "Tank.h"
 #include "TankAimingComponent.h"
 
 #pragma region Overrides
@@ -11,10 +10,7 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ControlledTank = GetControlledTank();
-	ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found."));
-
-	UTankAimingComponent* AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	if (ensureMsgf(AimingComponent != nullptr, TEXT("No aiming component found.")))
 	{
 		FoundAimingComponent(AimingComponent);
@@ -32,22 +28,16 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 
 void ATankPlayerController::AimAtCrosshair() const
 {
-	ensure(ControlledTank);
-
 	auto HitLocation = FVector(0.0f); // Out parameter.
 	if (GetCrosshairHitLocation(HitLocation))
 	{
-		ControlledTank->AimAt(HitLocation);
+		AimingComponent->AimAt(HitLocation);
 		// TODO: If it hits the landscape...
 		// Tell controlled tank to aim at this point.
 	}
 }
 
 #pragma region Getters
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
 
 // Get world location from line trace through crosshair.
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const

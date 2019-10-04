@@ -2,17 +2,9 @@
 
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Projectile.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
-
-#pragma region Overrides
-
-void UTankAimingComponent::InitializeComponent()
-{
-	//SetBarrelReference(GetOwner()->)
-}
-
-#pragma endregion
 
 // Sets default values for this component's properties
 UTankAimingComponent::UTankAimingComponent()
@@ -21,9 +13,18 @@ UTankAimingComponent::UTankAimingComponent()
 	// off to improve performance if you don't need them.
 
 	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
 }
+
+#pragma region Overrides
+
+void UTankAimingComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	ensureMsgf(ProjectileBP != nullptr, TEXT("Assign a ProjectileBP in the editor."));
+}
+
+#pragma endregion
 
 void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference)
 {
@@ -38,10 +39,8 @@ void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTur
 	}
 }
 
-void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
+void UTankAimingComponent::AimAt(const FVector TargetLocation) const
 {
-	ensureMsgf(Barrel != nullptr, TEXT("Barrel is nullptr."));
-
 	/// Set up of arguments for SuggestProjectileVelocity().
 	// Initializes OutLaunchVelocity to 0.
 	FVector OutLaunchVelocity(0);
@@ -78,9 +77,22 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	}
 }
 
-UTankBarrel* UTankAimingComponent::GetBarrel() const
+void UTankAimingComponent::Fire()
 {
-	return Barrel;
+	const bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
+
+	if (bIsReloaded)
+	{
+		// Spawns a Projectile.
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBP,
+			Barrel->GetSocketLocation("ProjectileStart"),
+			Barrel->GetSocketRotation("ProjectileStart")
+			);
+
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = GetWorld()->GetTimeSeconds();
+	}
 }
 
 void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const

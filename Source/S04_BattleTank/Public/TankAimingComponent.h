@@ -35,10 +35,22 @@ class S04_BATTLETANK_API UTankAimingComponent : public UActorComponent
 
 protected:
 
+	// Defines the exclusive states aiming can be in.
 	UPROPERTY(BlueprintReadOnly, Category = States)
 		EAimState AimState = EAimState::Aiming;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Firing)
+		float LaunchSpeed = 4e3f;
+
 private:
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		TSubclassOf<class AProjectile> ProjectileBP;
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		float ReloadTimeSeconds = 3.0f;
+
+	float LastFireTime = 0.0f;
 
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
@@ -54,19 +66,20 @@ public:
 		void InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference);
 
 	// Aims at a target location.
-	void AimAt(const FVector TargetLocation, const float LaunchSpeed) const;
+	void AimAt(const FVector TargetLocation) const;
 
-	UTankBarrel* GetBarrel() const;
+	// Fires a projectile.
+	UFUNCTION(BlueprintCallable, Category = Input)
+		void Fire();
 
 private:
 
 	// Sets default values for this component's properties. Can be private in UE4!
 	UTankAimingComponent();
 
-	// Called after the owning Actor was created.
-	virtual void InitializeComponent() override;
-
 	void RotateTurretAndBarrelTowards(FVector Direction) const;
+
+	virtual void BeginPlay() override;
 
 #pragma endregion
 };
