@@ -104,3 +104,4 @@ DerivedDataCache/*
 
 Content/StarterContent/
 *.code-workspace
+Config/DefaultEditorPerProjectUserSettings.ini
