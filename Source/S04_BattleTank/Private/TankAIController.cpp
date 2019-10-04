@@ -10,31 +10,27 @@
 
 void ATankAIController::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 }
 
 void ATankAIController::Tick(float DeltaSeconds)
 {
-	Super::Tick(DeltaSeconds);
+    Super::Tick(DeltaSeconds);
 
-	ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-	if (ensure(PlayerTank != nullptr))
-	{
-		ATank* ControlledTank = Cast<ATank>(GetPawn());
-		ensure(ControlledTank != nullptr);
+    ATank* PlayerTank = Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
+    if (ensure(PlayerTank != nullptr))
+    {
+        ATank* ControlledTank = Cast<ATank>(GetPawn());
+        ensure(ControlledTank != nullptr);
 
-		// Moves towards the player. Needs AcceptanceRadius!
-		MoveToActor(PlayerTank, AcceptanceRadiusCm);
+        // Moves towards the player. Needs AcceptanceRadius!
+        MoveToActor(PlayerTank, AcceptanceRadiusCm);
 
-		// Aims at the player.
-		ControlledTank->AimAt(PlayerTank->GetActorLocation());
+        // Aims at the player.
+        ControlledTank->AimAt(PlayerTank->GetActorLocation());
 
-		//TODO: Limit fire rate.
-		ControlledTank->Fire();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AIController did not find player."));
-	}
+        //TODO: Limit fire rate.
+        ControlledTank->Fire();
+    }
 }
 #pragma endregion

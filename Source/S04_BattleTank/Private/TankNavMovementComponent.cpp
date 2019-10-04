@@ -22,12 +22,20 @@ void UTankNavMovementComponent::RequestDirectMove(const FVector& MoveVelocity, b
 		MoveVelocity.IsNormalized() ? TEXT("True") : TEXT("False"));
 
 	// TODO: Why doesn't this work when normalizing with GetSafeNormal()?
-	//const auto MoveVelocityNormal = MoveVelocity.GetSafeNormal();
-	const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
+	const auto MoveVelocityNormal = MoveVelocity.GetSafeNormal();
+	//const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
 	UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocityNormal: %s, IsNormalized: %s"),
 		*GetOwner()->GetName(),
 		*MoveVelocityNormal.ToString(),
 		MoveVelocityNormal.IsNormalized() ? TEXT("True") : TEXT("False"));
+
+	//const FVector Test = FVector(2.f, 3.f, 4.f);
+	//const auto TestNormal = Test.GetSafeNormal();
+	////const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
+	//UE_LOG(LogTemp, Warning, TEXT("[%s] TestNormal: %s, IsNormalized: %s"),
+	//	*GetOwner()->GetName(),
+	//	*TestNormal.ToString(),
+	//	TestNormal.IsNormalized() ? TEXT("True") : TEXT("False"));
 
 	// Calculates the ForwardThrow.
 	const float ForwardThrow = FVector::DotProduct(TankForwardVectorNormal, MoveVelocityNormal);
