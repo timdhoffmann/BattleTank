@@ -22,6 +22,7 @@ class S04_BATTLETANK_API ATank : public APawn
 
 public:
 
+	// TODO: Remove once firing is moved to aiming component.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Firing)
 		float LaunchSpeed = 4e3f;
 

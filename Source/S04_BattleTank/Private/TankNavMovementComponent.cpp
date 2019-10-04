@@ -11,23 +11,16 @@ void UTankNavMovementComponent::RequestDirectMove(const FVector& MoveVelocity, b
 	// No need to call Super. Logic will be replaced.
 
 	const FVector TankForwardVectorNormal = GetOwner()->GetActorForwardVector();
-	UE_LOG(LogTemp, Warning, TEXT("[%s] TankForwardVectorNormal: %s, IsNormalized: %s"),
-		*GetOwner()->GetName(),
-		*TankForwardVectorNormal.ToString(),
-		TankForwardVectorNormal.IsNormalized() ? TEXT("True") : TEXT("False"));
 
-	UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocity: %s, IsNormalized: %s"),
-		*GetOwner()->GetName(),
-		*MoveVelocity.ToString(),
-		MoveVelocity.IsNormalized() ? TEXT("True") : TEXT("False"));
-
-	// TODO: Why doesn't this work when normalizing with GetSafeNormal()?
-	const auto MoveVelocityNormal = MoveVelocity.GetSafeNormal();
-	//const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
-	UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocityNormal: %s, IsNormalized: %s"),
+	// TODO: BUG! GetSafeNormal() only works in debug builds in this context! Filed to Epic.
+	//const auto MoveVelocityNormal = MoveVelocity.GetSafeNormal();
+	// TODO: Verify: is GetClampedToSize() leading to the same result as normalizing, here?
+	const auto MoveVelocityNormal = MoveVelocity.GetClampedToSize(-1.0f, 1.0f);
+	/*UE_LOG(LogTemp, Warning, TEXT("[%s] MoveVelocityNormal: %s, IsNormalized: %s"),
 		*GetOwner()->GetName(),
 		*MoveVelocityNormal.ToString(),
 		MoveVelocityNormal.IsNormalized() ? TEXT("True") : TEXT("False"));
+	*/
 
 	//const FVector Test = FVector(2.f, 3.f, 4.f);
 	//const auto TestNormal = Test.GetSafeNormal();
@@ -39,7 +32,6 @@ void UTankNavMovementComponent::RequestDirectMove(const FVector& MoveVelocity, b
 
 	// Calculates the ForwardThrow.
 	const float ForwardThrow = FVector::DotProduct(TankForwardVectorNormal, MoveVelocityNormal);
-	UE_LOG(LogTemp, Warning, TEXT("[%s] ForwardThrow: %f"), *GetOwner()->GetName(), ForwardThrow);
 
 	DrawDebugLine(GetWorld(), GetOwner()->GetActorLocation(), GetOwner()->GetActorLocation() + MoveVelocityNormal, FColor::Magenta, false, -1, 0, 1);
 
