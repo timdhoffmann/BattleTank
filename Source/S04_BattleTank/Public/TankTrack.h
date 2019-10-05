@@ -20,7 +20,7 @@ public:
 
 	// Sets the throttle on a single track.
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(float Throttle) const;
+		void SetThrottle(const float Throttle);
 
 private:
 
@@ -28,7 +28,14 @@ private:
 
 	virtual void BeginPlay() override;
 
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	// Compensates for the sideways slippage of the moving tank.
+	void CompensateSidewaysSlippage() const;
+	void DriveTrack() const;
+
+	// Delegate to be called by the OnComponentHit physics event.
+	// Must be a UFUNCTION.
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 #pragma endregion
 
@@ -41,12 +48,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float MaxDrivingForce = 400000.f;
 
-	UPrimitiveComponent* TankRootComponent;
+	float CurrentThrottle = 0.0f;
 
-	// Delegate to be called by the OnComponentHit physics event.
-	// Must be a UFUNCTION.
-	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	UPrimitiveComponent* TankRootComponent;
 
 #pragma endregion
 };
