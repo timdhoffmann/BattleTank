@@ -52,6 +52,8 @@ private:
 
 	float LastFireTime = MIN_flt;
 
+	FVector AimDirectionNormal = FVector::ZeroVector;
+
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
 
@@ -66,7 +68,7 @@ public:
 		void InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference);
 
 	// Aims at a target location.
-	void AimAt(const FVector TargetLocation) const;
+	void AimAt(const FVector TargetLocation);
 
 	// Fires a projectile.
 	UFUNCTION(BlueprintCallable, Category = Input)
@@ -80,6 +82,8 @@ private:
 	void RotateTurretAndBarrelTowards(FVector Direction) const;
 
 	virtual void BeginPlay() override;
+
+	bool IsBarrelMoving() const;
 
 	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 

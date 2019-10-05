@@ -31,13 +31,33 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	// Checks if is ready to fire.
-	if ((GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds)
+	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeSeconds)
 	{
 		AimState = EAimState::Reloading;
+	}
+	else if (IsBarrelMoving())
+	{
+		AimState = EAimState::Aiming;
+	}
+	else
+	{
+		AimState = EAimState::Locked;
 	}
 }
 
 #pragma endregion
+
+bool UTankAimingComponent::IsBarrelMoving() const
+{
+	if (!ensure(Barrel != nullptr))
+	{
+		return false;
+	}
+	// TODO: BUG! Normalization seems to be unreliable in development build!
+	FVector AimDirectionNormalCopy = AimDirectionNormal.GetUnsafeNormal();
+	//UE_LOG(LogTemp, Warning, TEXT("AimDirectionNormalCopy: %s"), *AimDirectionNormalCopy.ToString());
+	return !Barrel->GetForwardVector().Equals(AimDirectionNormalCopy, 0.1f);
+}
 
 void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference)
 {
@@ -52,11 +72,12 @@ void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTur
 	}
 }
 
-void UTankAimingComponent::AimAt(const FVector TargetLocation) const
+void UTankAimingComponent::AimAt(const FVector TargetLocation)
 {
+	ensure(Barrel != nullptr);
 	/// Set up of arguments for SuggestProjectileVelocity().
 	// Initializes OutLaunchVelocity to 0.
-	FVector OutLaunchVelocity(0);
+	FVector TossVelocity(0);
 	const FVector StartLocation = Barrel->GetSocketLocation("ProjectileStart");
 	const auto ActorsToIgnore = TArray<AActor*>();
 	const auto bDrawDebug = false;
@@ -65,7 +86,7 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation) const
 	const bool bHasProjectileVelocity = UGameplayStatics::SuggestProjectileVelocity
 	(
 		this,
-		OutLaunchVelocity,
+		TossVelocity,
 		StartLocation,
 		TargetLocation,
 		LaunchSpeed,
@@ -80,13 +101,14 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation) const
 
 	if (bHasProjectileVelocity)
 	{
+		// TODO: BUG! GetSafeNormal() seems to be unreliable in development build!
 		// Stores normalized version of the suggested LaunchVelocity.
-		auto const AimDirection = OutLaunchVelocity.GetSafeNormal();
+		AimDirectionNormal = TossVelocity.GetSafeNormal();
 
 		const auto ParentActorName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirectionNormal.ToString());
 
-		RotateTurretAndBarrelTowards(AimDirection);
+		RotateTurretAndBarrelTowards(AimDirectionNormal);
 	}
 }
 
@@ -108,14 +130,22 @@ void UTankAimingComponent::Fire()
 
 void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
 {
-	/// Rotates the barrel (pitch).
+	if (!ensure(Barrel != nullptr))
+	{
+		return;
+	}
+	// Rotates the barrel (pitch).
 	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
 
-	// Translates AimDirection into pitch.
+	// Translates AimDirectionNormal into pitch.
 	Barrel->RotatePitch(DeltaRotator.Pitch);
 
+	if (!ensure(Turret != nullptr))
+	{
+		return;
+	}
 	/// Rotates the Turret (yaw).
 	if (FMath::Abs(DeltaRotator.Yaw) < 180)
 	{

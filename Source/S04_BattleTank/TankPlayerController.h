@@ -32,7 +32,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 		int32 AimLineTraceRangeKm = 10;
 
-	const UTankAimingComponent* AimingComponent = nullptr;
+	UTankAimingComponent* AimingComponent = nullptr;
 
 #pragma endregion
 
@@ -42,7 +42,7 @@ protected:
 
 	// Raises an event in blueprint when the aiming component was found.
 	UFUNCTION(BlueprintImplementableEvent, Category = Setup)
-		void FoundAimingComponent(const UTankAimingComponent* TankAimingComponentRef) const; // Needs no definition as a BlueprintImplementableEvent.
+		void FoundAimingComponent(UTankAimingComponent* TankAimingComponentRef) const; // Needs no definition as a BlueprintImplementableEvent.
 
 private:
 
