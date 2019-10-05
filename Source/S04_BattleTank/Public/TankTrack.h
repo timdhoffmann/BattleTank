@@ -43,5 +43,10 @@ private:
 
 	UPrimitiveComponent* TankRootComponent;
 
+	// Delegate to be called by the OnComponentHit physics event.
+	// Must be a UFUNCTION.
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 #pragma endregion
 };

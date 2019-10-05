@@ -6,6 +6,9 @@
 UTankTrack::UTankTrack()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
+	// Subscribes to the OnComponentHit physics event.
+	OnComponentHit.AddDynamic(this, &UTankTrack::OnHit);
 }
 
 #pragma region Overrides
@@ -49,4 +52,10 @@ void UTankTrack::SetThrottle(const float Throttle) const
 	const auto ForceApplied = GetForwardVector() * MaxDrivingForce * Throttle;
 
 	TankRootComponent->AddForceAtLocation(ForceApplied, GetComponentLocation());
+}
+
+void UTankTrack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnHit called."));
 }
