@@ -129,6 +129,11 @@ void UTankAimingComponent::Fire()
 	}
 }
 
+EAimState UTankAimingComponent::GetAimState() const
+{
+	return AimState;
+}
+
 void UTankAimingComponent::RotateTurretAndBarrelTowards(FRotator TargetRotation) const
 {
 	if (!ensure(Barrel != nullptr))

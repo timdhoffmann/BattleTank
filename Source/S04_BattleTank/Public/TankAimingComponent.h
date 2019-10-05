@@ -74,6 +74,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void Fire();
 
+	EAimState GetAimState() const;
+
 private:
 
 	// Sets default values for this component's properties. Can be private in UE4!

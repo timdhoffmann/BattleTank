@@ -32,7 +32,10 @@ void ATankAIController::Tick(float DeltaSeconds)
 		AimingComponent->AimAt(Target->GetActorLocation());
 
 		// TODO: Limit fire rate.
-		AimingComponent->Fire();
+		if (AimingComponent->GetAimState() == EAimState::Locked)
+		{
+			AimingComponent->Fire();
+		}
 	}
 }
 #pragma endregion
