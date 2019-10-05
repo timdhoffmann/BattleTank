@@ -53,7 +53,7 @@ bool UTankAimingComponent::IsBarrelMoving() const
 	{
 		return false;
 	}
-	// TODO: BUG! Normalization seems to be unreliable in development build!
+	// TODO: BUG! Normalization seems to be unreliable in development build! Might be worth to work with Rotators and Rotator::IsNearlyZero().
 	FVector AimDirectionNormalCopy = AimDirectionNormal.GetUnsafeNormal();
 	//UE_LOG(LogTemp, Warning, TEXT("AimDirectionNormalCopy: %s"), *AimDirectionNormalCopy.ToString());
 	return !Barrel->GetForwardVector().Equals(AimDirectionNormalCopy, 0.1f);

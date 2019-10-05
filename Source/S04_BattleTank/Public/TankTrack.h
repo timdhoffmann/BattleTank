@@ -22,6 +22,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void SetThrottle(float Throttle) const;
 
+private:
+
+	UTankTrack();
+
+	virtual void BeginPlay() override;
+
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 #pragma endregion
 
 #pragma region Variables
@@ -32,6 +40,8 @@ private:
 	// Assume 40t tank, 1g acceleration.
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float MaxDrivingForce = 400000.f;
+
+	UPrimitiveComponent* TankRootComponent;
 
 #pragma endregion
 };
