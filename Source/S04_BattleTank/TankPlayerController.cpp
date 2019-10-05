@@ -32,8 +32,6 @@ void ATankPlayerController::AimAtCrosshair() const
 	if (GetCrosshairHitLocation(HitLocation))
 	{
 		AimingComponent->AimAt(HitLocation);
-		// TODO: If it hits the landscape...
-		// Tell controlled tank to aim at this point.
 	}
 }
 

@@ -53,10 +53,9 @@ bool UTankAimingComponent::IsBarrelMoving() const
 	{
 		return false;
 	}
-	// TODO: BUG! Normalization seems to be unreliable in development build! Might be worth to work with Rotators and Rotator::IsNearlyZero().
-	FVector AimDirectionNormalCopy = AimDirectionNormal.GetUnsafeNormal();
-	//UE_LOG(LogTemp, Warning, TEXT("AimDirectionNormalCopy: %s"), *AimDirectionNormalCopy.ToString());
-	return !Barrel->GetForwardVector().Equals(AimDirectionNormalCopy, 0.1f);
+	// TODO: BUG! Normalization seems to be unreliable in development build! Using Rotators instead. Needs refinement!
+	const FRotator AimBarrelDeltaRotator = Barrel->GetForwardVector().Rotation() - AimDirectionNormal.Rotation();
+	return !(AimBarrelDeltaRotator.IsNearlyZero(0.1f));
 }
 
 void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference)
@@ -103,12 +102,14 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation)
 	{
 		// TODO: BUG! GetSafeNormal() seems to be unreliable in development build!
 		// Stores normalized version of the suggested LaunchVelocity.
-		AimDirectionNormal = TossVelocity.GetSafeNormal();
+		//AimDirectionNormal = TossVelocity.GetSafeNormal();
+		AimDirectionNormal = TossVelocity.GetClampedToMaxSize(1.0f);
+		//UE_LOG(LogTemp, Warning, TEXT("AimDirectionNormal is normalized: %i"), AimDirectionNormal.IsNormalized());
 
 		const auto ParentActorName = GetOwner()->GetName();
 		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirectionNormal.ToString());
 
-		RotateTurretAndBarrelTowards(AimDirectionNormal);
+		RotateTurretAndBarrelTowards(AimDirectionNormal.Rotation());
 	}
 }
 
@@ -128,7 +129,7 @@ void UTankAimingComponent::Fire()
 	}
 }
 
-void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
+void UTankAimingComponent::RotateTurretAndBarrelTowards(FRotator TargetRotation) const
 {
 	if (!ensure(Barrel != nullptr))
 	{
@@ -137,7 +138,7 @@ void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
 	// Rotates the barrel (pitch).
 	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
-	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
+	const auto DeltaRotator = TargetRotation - BarrelRotator;
 
 	// Translates AimDirectionNormal into pitch.
 	Barrel->RotatePitch(DeltaRotator.Pitch);
@@ -146,8 +147,10 @@ void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
 	{
 		return;
 	}
-	/// Rotates the Turret (yaw).
-	if (FMath::Abs(DeltaRotator.Yaw) < 180)
+	// TODO: The turret should always take the shortest direction relative to the crosshair.
+	//UE_LOG(LogTemp, Warning, TEXT("Abs DeltaRotator.Yaw: %f"), FMath::Abs<float>(DeltaRotator.Yaw));
+	/// Rotates the Turret (yaw), taking the shortest way.
+	if (FMath::Abs<float>(DeltaRotator.Yaw) < 180.0f)
 	{
 		Turret->RotateYaw(DeltaRotator.Yaw);
 	}

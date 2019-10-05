@@ -79,7 +79,7 @@ private:
 	// Sets default values for this component's properties. Can be private in UE4!
 	UTankAimingComponent();
 
-	void RotateTurretAndBarrelTowards(FVector Direction) const;
+	void RotateTurretAndBarrelTowards(FRotator TargetRotation) const;
 
 	virtual void BeginPlay() override;
 
