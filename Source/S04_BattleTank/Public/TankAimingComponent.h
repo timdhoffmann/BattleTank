@@ -13,7 +13,8 @@ enum class EAimState : uint8
 {
 	Reloading,
 	Aiming,
-	Locked
+	Locked,
+	NoAmmo
 };
 
 #pragma endregion
@@ -50,6 +51,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float ReloadTimeSeconds = 3.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		int8 StartingAmmo = 3;
+	
+	int Ammo = 0;
+
 	float LastFireTime = MIN_flt;
 
 	FVector AimDirectionNormal = FVector::ZeroVector;
@@ -74,7 +80,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Input)
 		void Fire();
 
+	UFUNCTION(BlueprintCallable, Category = States)
+	int GetRemainingAmmo() const;
+
 	EAimState GetAimState() const;
+
 
 private:
 

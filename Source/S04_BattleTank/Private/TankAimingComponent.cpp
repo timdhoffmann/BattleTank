@@ -24,6 +24,8 @@ void UTankAimingComponent::BeginPlay()
 	// Prevents firing before an initial reload.
 	LastFireTime = GetWorld()->GetTimeSeconds();
 
+	Ammo = StartingAmmo;
+
 	ensureMsgf(ProjectileBP != nullptr, TEXT("Assign a ProjectileBP in the editor."));
 }
 
@@ -31,7 +33,11 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	FActorComponentTickFunction* ThisTickFunction)
 {
 	// Checks if is ready to fire.
-	if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeSeconds)
+	if (Ammo <= 0)
+	{
+		AimState = EAimState::NoAmmo;
+	}
+	else if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeSeconds)
 	{
 		AimState = EAimState::Reloading;
 	}
@@ -115,7 +121,7 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation)
 
 void UTankAimingComponent::Fire()
 {
-	if (AimState != EAimState::Reloading)
+	if (AimState == EAimState::Aiming || AimState == EAimState::Locked)
 	{
 		// Spawns a Projectile.
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
@@ -126,12 +132,18 @@ void UTankAimingComponent::Fire()
 
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = GetWorld()->GetTimeSeconds();
+		Ammo--;
 	}
 }
 
 EAimState UTankAimingComponent::GetAimState() const
 {
 	return AimState;
+}
+
+int UTankAimingComponent::GetRemainingAmmo() const
+{
+	return Ammo;
 }
 
 void UTankAimingComponent::RotateTurretAndBarrelTowards(FRotator TargetRotation) const
