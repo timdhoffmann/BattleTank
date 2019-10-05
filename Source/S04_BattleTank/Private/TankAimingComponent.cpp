@@ -12,7 +12,7 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 #pragma region Overrides
@@ -21,7 +21,20 @@ void UTankAimingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Prevents firing before an initial reload.
+	LastFireTime = GetWorld()->GetTimeSeconds();
+
 	ensureMsgf(ProjectileBP != nullptr, TEXT("Assign a ProjectileBP in the editor."));
+}
+
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	// Checks if is ready to fire.
+	if ((GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds)
+	{
+		AimState = EAimState::Reloading;
+	}
 }
 
 #pragma endregion
@@ -79,9 +92,7 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation) const
 
 void UTankAimingComponent::Fire()
 {
-	const bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
-
-	if (bIsReloaded)
+	if (AimState != EAimState::Reloading)
 	{
 		// Spawns a Projectile.
 		auto Projectile = GetWorld()->SpawnActor<AProjectile>(

@@ -37,7 +37,7 @@ protected:
 
 	// Defines the exclusive states aiming can be in.
 	UPROPERTY(BlueprintReadOnly, Category = States)
-		EAimState AimState = EAimState::Aiming;
+		EAimState AimState = EAimState::Reloading;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Firing)
 		float LaunchSpeed = 4e3f;
@@ -50,7 +50,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float ReloadTimeSeconds = 3.0f;
 
-	float LastFireTime = 0.0f;
+	float LastFireTime = MIN_flt;
 
 	UTankBarrel* Barrel = nullptr;
 	UTankTurret* Turret = nullptr;
@@ -80,6 +80,8 @@ private:
 	void RotateTurretAndBarrelTowards(FVector Direction) const;
 
 	virtual void BeginPlay() override;
+
+	void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 #pragma endregion
 };
