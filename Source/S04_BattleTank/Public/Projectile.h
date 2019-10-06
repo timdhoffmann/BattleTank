@@ -9,6 +9,7 @@
 #pragma region Forward Declarations
 
 class UParticleSystemComponent;
+class URadialForceComponent;
 
 #pragma endregion
 UCLASS()
@@ -38,14 +39,17 @@ private:
 	class UProjectileMovementComponent* ProjectileMovementComponent = nullptr;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Setup)
+	UPROPERTY(VisibleAnywhere, Category = Components)
 		UStaticMeshComponent* CollisionMesh = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = Setup)
+	UPROPERTY(VisibleAnywhere, Category = Components)
 		UParticleSystemComponent* LaunchBlast = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = Setup)
+	UPROPERTY(VisibleAnywhere, Category = Components)
 		UParticleSystemComponent* ImpactExplosion = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = Components)
+		URadialForceComponent* ImpactRadialForce = nullptr;
 
 #pragma endregion
 };
