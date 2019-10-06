@@ -32,6 +32,9 @@ private:
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
+	// Called when the ProjectileTimer expires.
+	void OnProjectileTimerExpired();
+
 #pragma endregion
 
 #pragma region Variables
@@ -50,6 +53,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
 		URadialForceComponent* ImpactRadialForce = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		float DestroyDelay = 8.0f;
 
 #pragma endregion
 };

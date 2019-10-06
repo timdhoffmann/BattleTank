@@ -2,9 +2,11 @@
 
 #include "Projectile.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
+#include "TimerManager.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -52,6 +54,25 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	LaunchBlast->Deactivate();
 	ImpactExplosion->Activate();
 	ImpactRadialForce->FireImpulse();
+
+	// Sets a new root component before destroying the current root component.
+	SetRootComponent(ImpactExplosion);
+	CollisionMesh->DestroyComponent();
+
+	// Sets up a timer to  destroy this projectile after a delay.
+	FTimerHandle ProjectileTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer
+	(
+		ProjectileTimerHandle,
+		this,
+		&AProjectile::OnProjectileTimerExpired,
+		DestroyDelay
+	);
+}
+
+void AProjectile::OnProjectileTimerExpired()
+{
+	this->Destroy();
 }
 
 #pragma endregion
