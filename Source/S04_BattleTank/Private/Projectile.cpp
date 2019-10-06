@@ -1,7 +1,9 @@
 // Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "Projectile.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -9,24 +11,20 @@ AProjectile::AProjectile()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("CollisionMesh");
+	SetRootComponent(CollisionMesh);
+	CollisionMesh->SetNotifyRigidBodyCollision(true);
+	CollisionMesh->SetVisibility(false);
+
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovementComponent");
-	// Prevents objectile from flying off immediately.
+	// Prevents projectile from flying off immediately.
 	ProjectileMovementComponent->bAutoActivate = false;
+
+	LaunchBlast = CreateDefaultSubobject<UParticleSystemComponent>("LaunchBlast");
+	LaunchBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_Name);
 }
 
-// Called when the game starts or when spawned
-void AProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void AProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void AProjectile::LaunchProjectile(float Speed)
+void AProjectile::LaunchProjectile(const float Speed) const
 {
 	ProjectileMovementComponent->SetVelocityInLocalSpace(FVector::ForwardVector * Speed);
 

@@ -40,6 +40,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = States)
 		EAimState AimState = EAimState::Reloading;
 
+	// BlueprintReadWrite can not be used on private members.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Firing)
 		float LaunchSpeed = 4e3f;
 
@@ -48,13 +49,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		TSubclassOf<class AProjectile> ProjectileBP;
 
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+		int32 StartingAmmo = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
 		float ReloadTimeSeconds = 3.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
-		int8 StartingAmmo = 3;
-	
-	int Ammo = 0;
+	int32 Ammo = 0;
 
 	float LastFireTime = MIN_flt;
 
@@ -73,18 +74,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Setup)
 		void InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference);
 
+	// Fires a projectile.
+	UFUNCTION(BlueprintCallable, Category = Firing)
+		void Fire();
+
+	UFUNCTION(BlueprintCallable, Category = Firing)
+		int32 GetRemainingAmmo() const;
+
 	// Aims at a target location.
 	void AimAt(const FVector TargetLocation);
 
-	// Fires a projectile.
-	UFUNCTION(BlueprintCallable, Category = Input)
-		void Fire();
-
-	UFUNCTION(BlueprintCallable, Category = States)
-	int GetRemainingAmmo() const;
-
 	EAimState GetAimState() const;
-
 
 private:
 
