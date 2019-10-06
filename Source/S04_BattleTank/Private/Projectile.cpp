@@ -9,7 +9,10 @@
 AProjectile::AProjectile()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
+
+	// Subscribes to the OnComponentHit physics event.
+	CollisionMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 
 	CollisionMesh = CreateDefaultSubobject<UStaticMeshComponent>("CollisionMesh");
 	SetRootComponent(CollisionMesh);
@@ -21,7 +24,11 @@ AProjectile::AProjectile()
 	ProjectileMovementComponent->bAutoActivate = false;
 
 	LaunchBlast = CreateDefaultSubobject<UParticleSystemComponent>("LaunchBlast");
-	LaunchBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform, NAME_Name);
+	LaunchBlast->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	ImpactExplosion = CreateDefaultSubobject<UParticleSystemComponent>("ImpactExplosion");
+	ImpactExplosion->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	ImpactExplosion->bAutoActivate = false;
 }
 
 void AProjectile::LaunchProjectile(const float Speed) const
@@ -30,3 +37,14 @@ void AProjectile::LaunchProjectile(const float Speed) const
 
 	ProjectileMovementComponent->Activate();
 }
+
+#pragma region Event Handlers
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	LaunchBlast->Deactivate();
+	ImpactExplosion->Activate();
+}
+
+#pragma endregion

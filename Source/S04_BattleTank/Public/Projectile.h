@@ -24,6 +24,13 @@ public:
 
 	void LaunchProjectile(const float Speed) const;
 
+private:
+
+	// Delegate to be called by the OnComponentHit physics event.
+	// Must be a UFUNCTION.
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 #pragma endregion
 
 #pragma region Variables
@@ -36,6 +43,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Setup)
 		UParticleSystemComponent* LaunchBlast = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = Setup)
+		UParticleSystemComponent* ImpactExplosion = nullptr;
 
 #pragma endregion
 };
