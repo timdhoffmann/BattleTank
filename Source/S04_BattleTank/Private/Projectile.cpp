@@ -3,7 +3,9 @@
 #include "Projectile.h"
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
+#include "GameFramework/DamageType.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 #include "TimerManager.h"
@@ -54,6 +56,11 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	LaunchBlast->Deactivate();
 	ImpactExplosion->Activate();
 	ImpactRadialForce->FireImpulse();
+
+	// Applies damage.
+	// Empty TArray to ignore no actors.
+	const auto ActorsToIgnore = TArray<AActor*>();
+	UGameplayStatics::ApplyRadialDamage(this, Damage, this->GetActorLocation(), ImpactRadialForce->Radius, UDamageType::StaticClass(), ActorsToIgnore);
 
 	// Sets a new root component before destroying the current root component.
 	SetRootComponent(ImpactExplosion);

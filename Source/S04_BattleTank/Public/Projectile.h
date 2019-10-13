@@ -57,5 +57,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float DestroyDelay = 8.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
+		float Damage = 20.0f;
+
 #pragma endregion
 };
