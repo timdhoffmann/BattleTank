@@ -2,6 +2,11 @@
 
 #include "Tank.h"
 
+float ATank::GetHealthPercent() const
+{
+	return float(Health) / float(StartingHealth);
+}
+
 // Sets default values
 ATank::ATank()
 {

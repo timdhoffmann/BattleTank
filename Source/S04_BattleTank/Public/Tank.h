@@ -14,6 +14,12 @@ class S04_BATTLETANK_API ATank : public APawn
 
 #pragma region Functions
 
+public:
+
+	// Returns Health as a percentage of StartingHealth (read only).
+	UFUNCTION(BlueprintPure, Category = Health)
+		float GetHealthPercent() const;
+
 private:
 
 	// Sets default values for this pawn's properties. Can be private in UE4!
