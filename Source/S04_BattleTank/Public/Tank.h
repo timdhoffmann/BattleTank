@@ -6,6 +6,12 @@
 #include "GameFramework/Pawn.h"
 #include "Tank.generated.h" // Must be last include.
 
+#pragma region Delegate & Event Signatures
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTank);
+
+#pragma endregion
+
 // A Tank that can be controlled by a player or by the AI.
 UCLASS()
 class S04_BATTLETANK_API ATank : public APawn
@@ -31,6 +37,14 @@ private:
 #pragma endregion
 
 #pragma region Variables
+
+public:
+#pragma region Delegate & Event Instances
+
+	// TODO: Check access level.
+	FTank OnDied;
+
+#pragma endregion
 
 private:
 

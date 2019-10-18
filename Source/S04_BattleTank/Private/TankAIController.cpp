@@ -4,9 +4,15 @@
 #include "TankAimingComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+#include "Tank.h"
 // Depends on movement component via NavMesh AI system.
 
 #pragma region Overrides
+
+void ATankAIController::OnTankDied()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Tank died."));
+}
 
 void ATankAIController::BeginPlay()
 {
@@ -38,4 +44,24 @@ void ATankAIController::Tick(float DeltaSeconds)
 		}
 	}
 }
+
+// Event subscriptions go here, because we need to make sure we have a pawn (avoid race conditions).
+void ATankAIController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+	if (InPawn == nullptr)
+	{
+		return;
+	}
+
+	ATank* PossessedTank = Cast<ATank>(InPawn);
+	if (!ensure(PossessedTank != nullptr))
+	{
+		return;
+	}
+
+	// Subscribes to OnDied event.
+	PossessedTank->OnDied.AddUniqueDynamic(this, &ATankAIController::OnTankDied);
+}
+
 #pragma endregion

@@ -30,6 +30,9 @@ float ATank::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, ACo
 	if (Health <= 0)
 	{
 		SetLifeSpan(0.001f);
+
+		// Raises OnDeath event.
+		OnDied.Broadcast();
 	}
 
 	return ActualDamage;
