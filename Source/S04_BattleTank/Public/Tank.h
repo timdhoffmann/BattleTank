@@ -31,6 +31,8 @@ private:
 	// Sets default values for this pawn's properties. Can be private in UE4!
 	ATank();
 
+	virtual void BeginPlay() override;
+
 	// Called by the engine when actor damage is dealt.
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -48,11 +50,11 @@ public:
 
 private:
 
-	UPROPERTY(VisibleAnywhere, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		int32 StartingHealth = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = Properties)
-		int32 Health = StartingHealth;
+		int32 Health = 100.0f;
 
 #pragma endregion
 };

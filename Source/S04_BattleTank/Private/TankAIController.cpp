@@ -11,6 +11,14 @@
 
 void ATankAIController::OnPossessedTankDied()
 {
+	APawn* Pawn = GetPawn();
+	if (Pawn != nullptr)
+	{
+		// Stops the Tank from firing.
+		// Might not be needed, when the Tank is destroying itself.
+		Pawn->DetachFromControllerPendingDestroy();
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("Tank died."));
 }
 

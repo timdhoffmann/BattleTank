@@ -123,6 +123,9 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 
 void ATankPlayerController::OnPossessedTankDied()
 {
+	// Enables spectator mode.
+	StartSpectatingOnly();
+	
 	UE_LOG(LogTemp, Warning, TEXT("Player died!"));
 }
 
