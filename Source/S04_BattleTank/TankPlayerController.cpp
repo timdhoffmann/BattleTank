@@ -3,6 +3,7 @@
 #include "TankPlayerController.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
+#include "Tank.h"
 
 #pragma region Overrides
 // Called when the game starts.
@@ -23,6 +24,25 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	AimAtCrosshair();
+}
+
+void ATankPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (InPawn == nullptr)
+	{
+		return;
+	}
+
+	auto PossessedTank = Cast<ATank>(InPawn);
+
+	if (!ensure(PossessedTank != nullptr))
+	{
+		return;
+	}
+
+	PossessedTank->OnDied.AddUniqueDynamic(this, &ATankPlayerController::OnPossessedTankDied);
 }
 #pragma endregion
 
@@ -96,4 +116,14 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 	}
 	return false;
 }
+
+#pragma endregion
+
+#pragma region Delegate & Event Subsribers
+
+void ATankPlayerController::OnPossessedTankDied()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player died!"));
+}
+
 #pragma endregion

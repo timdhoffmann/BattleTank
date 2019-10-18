@@ -32,17 +32,16 @@ private:
 
 #pragma region Functions
 
-public:
+private:
+
 #pragma region Delegate & Event Subscribers
 
 	// Need to be UFUNCTION()s.
-	// TODO: Check accessibility level.
 	UFUNCTION()
-		void OnTankDied();
+		void OnPossessedTankDied();
 
 #pragma endregion
 
-private:
 	// Called when the game starts.
 	virtual void BeginPlay() override;
 

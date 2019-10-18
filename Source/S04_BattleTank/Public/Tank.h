@@ -8,7 +8,7 @@
 
 #pragma region Delegate & Event Signatures
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTank);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTankDelegate);
 
 #pragma endregion
 
@@ -39,19 +39,19 @@ private:
 #pragma region Variables
 
 public:
+
 #pragma region Delegate & Event Instances
 
-	// TODO: Check access level.
-	FTank OnDied;
+	FTankDelegate OnDied;
 
 #pragma endregion
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, Category = Setup)
+	UPROPERTY(VisibleAnywhere, Category = Setup)
 		int32 StartingHealth = 100.0f;
 
-	UPROPERTY(VisibleAnywhere, Category = Properties)
+	UPROPERTY(EditAnywhere, Category = Properties)
 		int32 Health = StartingHealth;
 
 #pragma endregion

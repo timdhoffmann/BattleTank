@@ -52,6 +52,9 @@ private:
 	// Called every frame to update this actor.
 	virtual void Tick(float DeltaSeconds) override;
 
+	// Called when the pawn is set. Used for delegate subscriptions.
+	virtual void SetPawn(APawn* InPawn) override;
+
 	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world.
 	void AimAtCrosshair() const;
 
@@ -67,6 +70,13 @@ private:
 	// Performs a line trace and stores the hit location in the out parameter.
 	// Returns false if nothing was hit.
 	bool GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const;
+
+#pragma region Delegate & Event Subscribers
+
+	UFUNCTION()
+		void OnPossessedTankDied();
+
+#pragma endregion
 
 #pragma endregion
 };

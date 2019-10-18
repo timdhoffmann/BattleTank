@@ -9,7 +9,7 @@
 
 #pragma region Overrides
 
-void ATankAIController::OnTankDied()
+void ATankAIController::OnPossessedTankDied()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Tank died."));
 }
@@ -55,13 +55,15 @@ void ATankAIController::SetPawn(APawn* InPawn)
 	}
 
 	ATank* PossessedTank = Cast<ATank>(InPawn);
-	if (!ensure(PossessedTank != nullptr))
+
+	// Can be a non-tank, e.g. a mortar.
+	if (PossessedTank == nullptr)
 	{
 		return;
 	}
 
 	// Subscribes to OnDied event.
-	PossessedTank->OnDied.AddUniqueDynamic(this, &ATankAIController::OnTankDied);
+	PossessedTank->OnDied.AddUniqueDynamic(this, &ATankAIController::OnPossessedTankDied);
 }
 
 #pragma endregion
