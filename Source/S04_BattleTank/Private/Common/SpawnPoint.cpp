@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/World.h"
 #include "Vehicles/Tank/SprungWheel.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 USpawnPoint::USpawnPoint()
@@ -20,9 +21,20 @@ void USpawnPoint::BeginPlay()
 
 	if (ensure(ActorToSpawn != nullptr))
 	{
-		auto Actor = GetWorld()->SpawnActor<AActor>(ActorToSpawn);
+		// Using SpawnActorDeferred allows to attach the spawned actor first
+		// and manually call its constructor and BeginPlay() afterwards by
+		// invoking UGameplayStatics::FinishSpawningActor().
+		const auto SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(
+			ActorToSpawn,
+			GetComponentTransform(),
+			GetOwner(),
+			nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+			);
 
-		Actor->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+		SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
+
+		UGameplayStatics::FinishSpawningActor(SpawnedActor, GetComponentTransform());
 	}
 }
 
