@@ -16,22 +16,41 @@ ASprungWheel::ASprungWheel()
 	Spring = CreateDefaultSubobject<UPhysicsConstraintComponent>("Spring");
 	SetRootComponent(Spring);
 
-	Mass = CreateDefaultSubobject<UStaticMeshComponent>("Mass");
-	Mass->SetupAttachment(Spring);
-
 	Wheel = CreateDefaultSubobject <UStaticMeshComponent>("Wheel");
 	// Preferred way of attaching to another component (constructor-only).
 	Wheel->SetupAttachment(Spring);
 }
 
+#pragma region Overrides
+
 // Called when the game starts or when spawned
 void ASprungWheel::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InitConstraints();
 }
 
 // Called every frame
 void ASprungWheel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+#pragma endregion
+
+void ASprungWheel::InitConstraints() const
+{
+	const AActor* ParentActor = GetAttachParentActor();
+	if (!ensure(ParentActor != nullptr)) return;
+
+	UPrimitiveComponent* ParentRootComponent = Cast<UPrimitiveComponent>(ParentActor->GetRootComponent());
+	if (!ensure(ParentRootComponent != nullptr)) return;
+
+	Spring->SetConstrainedComponents(
+		ParentRootComponent,
+		NAME_None,
+		Wheel,
+		NAME_None
+	);
 }
