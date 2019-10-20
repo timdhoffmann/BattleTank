@@ -11,15 +11,17 @@ ASprungWheel::ASprungWheel()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Mass = CreateDefaultSubobject<UStaticMeshComponent>("Mass");
-	SetRootComponent(Mass);
-
-	Wheel = CreateDefaultSubobject < UStaticMeshComponent>("Wheel");
-	// Preferred way of attaching to another component (constructor-only).
-	Wheel->SetupAttachment(RootComponent);
-
+	// The Spring should be the root component to make the SprungWheel not pop out of the hierarchy.
+	// The other components have simulate physics enabled, which causes this problem.
 	Spring = CreateDefaultSubobject<UPhysicsConstraintComponent>("Spring");
-	Spring->SetupAttachment(RootComponent);
+	SetRootComponent(Spring);
+
+	Mass = CreateDefaultSubobject<UStaticMeshComponent>("Mass");
+	Mass->SetupAttachment(Spring);
+
+	Wheel = CreateDefaultSubobject <UStaticMeshComponent>("Wheel");
+	// Preferred way of attaching to another component (constructor-only).
+	Wheel->SetupAttachment(Spring);
 }
 
 // Called when the game starts or when spawned
