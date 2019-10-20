@@ -8,8 +8,12 @@
 
 #pragma region Forward Declarations
 
+#pragma region Forward Declarations
+
 class UPhysicsConstraintComponent;
-class UStaticMeshComponent;
+class USphereComponent;
+
+#pragma endregion
 
 #pragma endregion
 
@@ -44,10 +48,16 @@ private:
 	/// Components.
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
-		UStaticMeshComponent* Wheel = nullptr;
+		UPhysicsConstraintComponent* SpringPhysicsConstraint = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = Components)
-		UPhysicsConstraintComponent* Spring = nullptr;
+		UPhysicsConstraintComponent* AxlePhysicsConstraint = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = Components)
+		USphereComponent* Axle = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = Components)
+		USphereComponent* Wheel = nullptr;
 
 #pragma endregion
 };
