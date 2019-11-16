@@ -6,6 +6,12 @@
 #include "Components/StaticMeshComponent.h"
 #include "TankTrack.generated.h"
 
+#pragma region Forward Declarations
+
+class ASprungWheel;
+
+#pragma endregion
+
 /**
  * Moves the tank.
  */
@@ -20,7 +26,7 @@ public:
 
 	// Sets the throttle on a single track.
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(const float Throttle);
+		void SetThrottle(const float Throttle) const;
 
 private:
 
@@ -28,14 +34,9 @@ private:
 
 	virtual void BeginPlay() override;
 
-	// Compensates for the sideways slippage of the moving tank.
-	void CompensateSidewaysSlippage() const;
-	void DriveTrack() const;
+	void DriveTrack(float CurrentThrottle) const;
 
-	// Delegate to be called by the OnComponentHit physics event.
-	// Must be a UFUNCTION.
-	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	TArray<ASprungWheel*> GetWheels() const;
 
 #pragma endregion
 
@@ -47,10 +48,6 @@ private:
 	// Assume 40t tank, 1g acceleration.
 	UPROPERTY(EditDefaultsOnly, Category = Setup)
 		float MaxDrivingForce = 400000.f;
-
-	float CurrentThrottle = 0.0f;
-
-	UPrimitiveComponent* TankRootComponent;
 
 #pragma endregion
 };

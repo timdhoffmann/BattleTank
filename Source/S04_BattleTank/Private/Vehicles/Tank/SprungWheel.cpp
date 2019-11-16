@@ -74,3 +74,10 @@ void ASprungWheel::InitConstraints() const
 		NAME_None
 	);
 }
+
+void ASprungWheel::AddDrivingForce(float ForceMagnitude) const
+{
+	const FVector Force = Axle->GetForwardVector() * ForceMagnitude;
+	Wheel->AddForce(Force);
+	UE_LOG(LogTemp, Warning, TEXT("Applied force to wheel: %s"), *Force.ToString());
+}

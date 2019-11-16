@@ -24,16 +24,14 @@ void USpawnPoint::BeginPlay()
 		// Using SpawnActorDeferred allows to attach the spawned actor first
 		// and manually call its constructor and BeginPlay() afterwards by
 		// invoking UGameplayStatics::FinishSpawningActor().
-		const auto SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(
+		SpawnedActor = GetWorld()->SpawnActorDeferred<AActor>(
 			ActorToSpawn,
 			GetComponentTransform(),
 			GetOwner(),
 			nullptr,
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 			);
-
 		SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform);
-
 		UGameplayStatics::FinishSpawningActor(SpawnedActor, GetComponentTransform());
 	}
 }
