@@ -91,21 +91,21 @@ void ASprungWheel::InitConstraints() const
 void ASprungWheel::AddDrivingForce(float ForceMagnitude)
 {
 	CurrentDrivingForceMagnitude += ForceMagnitude;
-	
 }
 
 void ASprungWheel::ApplyForce() const
 {
 	const FVector DrivingForce = Axle->GetForwardVector() * CurrentDrivingForceMagnitude;
 	Wheel->AddForce(DrivingForce);
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Added force (%s) to %s"), *GetName(), *DrivingForce.ToString(), *Wheel->GetOwner()->GetName());
-
 }
 
 // Applies DrivingForce to wheel only on physics collision.
 void ASprungWheel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// TODO: Called multiple times within the same frame. Does that cause issues?
+
+	if (!Hit.IsValidBlockingHit()) return;
+	UE_LOG(LogTemp, Warning, TEXT("[%s] OnHit triggered with: %s"), *GetName(), *OtherComponent->GetName());
 
 	ApplyForce();
 }
