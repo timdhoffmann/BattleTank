@@ -11,6 +11,8 @@ ASprungWheel::ASprungWheel()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	// Sets the actor to tick post physics, so we can react to collision in tick.
+	PrimaryActorTick.TickGroup = TG_PostPhysics;
 
 	// The SpringPhysicsConstraint should be the root component to make the SprungWheel not pop out of the hierarchy.
 	// The other components have simulate physics enabled, which causes this problem.
@@ -37,6 +39,10 @@ void ASprungWheel::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// Makes sure that the wheel generates Hit events.
+	Wheel->SetNotifyRigidBodyCollision(true);
+	Wheel->OnComponentHit.AddDynamic(this, &ASprungWheel::OnHit);
+
 	InitConstraints();
 }
 
@@ -44,6 +50,13 @@ void ASprungWheel::BeginPlay()
 void ASprungWheel::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// Ensures post physics execution.
+	if (GetWorld()->TickGroup == TG_PostPhysics)
+	{
+		// Resets the DrivingForce before the next frame.
+		CurrentDrivingForceMagnitude = 0.f;
+	}
 }
 
 #pragma endregion
@@ -75,9 +88,24 @@ void ASprungWheel::InitConstraints() const
 	);
 }
 
-void ASprungWheel::AddDrivingForce(float ForceMagnitude) const
+void ASprungWheel::AddDrivingForce(float ForceMagnitude)
 {
-	const FVector Force = Axle->GetForwardVector() * ForceMagnitude;
-	Wheel->AddForce(Force);
-	UE_LOG(LogTemp, Warning, TEXT("Applied force to wheel: %s"), *Force.ToString());
+	CurrentDrivingForceMagnitude += ForceMagnitude;
+	
+}
+
+void ASprungWheel::ApplyForce() const
+{
+	const FVector DrivingForce = Axle->GetForwardVector() * CurrentDrivingForceMagnitude;
+	Wheel->AddForce(DrivingForce);
+	UE_LOG(LogTemp, Warning, TEXT("[%s] Added force (%s) to %s"), *GetName(), *DrivingForce.ToString(), *Wheel->GetOwner()->GetName());
+
+}
+
+// Applies DrivingForce to wheel only on physics collision.
+void ASprungWheel::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
+{
+	// TODO: Called multiple times within the same frame. Does that cause issues?
+
+	ApplyForce();
 }

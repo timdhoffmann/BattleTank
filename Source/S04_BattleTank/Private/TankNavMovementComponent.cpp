@@ -58,6 +58,11 @@ void UTankNavMovementComponent::Init(UTankTrack* LeftTrackToSet, UTankTrack* Rig
 
 void UTankNavMovementComponent::IntendMoveForward(const float Throw) const
 {
+	if (FMath::IsNearlyZero(Throw, 0.01f))
+	{
+		return;
+	}
+	
 	// TODO: Prevent double-speed when using multiple input devices.
 
 	if (ensure(LeftTrack != nullptr && RightTrack != nullptr))
@@ -69,6 +74,11 @@ void UTankNavMovementComponent::IntendMoveForward(const float Throw) const
 
 void UTankNavMovementComponent::IntendTurnRight(const float Throw) const
 {
+	if (FMath::IsNearlyZero(Throw, 0.01f))
+	{
+		return;
+	}
+	
 	// TODO: Prevent double-speed when using multiple input devices.
 
 	if (ensure(LeftTrack != nullptr && RightTrack != nullptr))

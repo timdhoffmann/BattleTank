@@ -21,20 +21,19 @@ void UTankTrack::BeginPlay()
 
 void UTankTrack::DriveTrack(float CurrentThrottle) const
 {
+	UE_LOG(LogTemp, Warning, TEXT("[%s] DriveTrack called"), *GetName());
+	
 	const float Force = MaxDrivingForce * CurrentThrottle;
 
 	const TArray<ASprungWheel*> Wheels = GetWheels();
 	const float ForcePerWheel = Force / Wheels.Num();
-	
 
 	for (ASprungWheel* Wheel : Wheels)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MaxDrivingForce: %f."), MaxDrivingForce);
-
-		UE_LOG(LogTemp, Warning, TEXT("Adding force to wheel: %f."),ForcePerWheel);
-
+		UE_LOG(LogTemp, Warning, TEXT("[%s] adding force %f to wheel %s"), *GetName(), Force, *Wheel->GetName());
 		Wheel->AddDrivingForce(ForcePerWheel);
 	}
+
 }
 
 void UTankTrack::SetThrottle(const float Throttle) const
@@ -55,7 +54,7 @@ TArray<ASprungWheel*> UTankTrack::GetWheels() const
 		if (!(Child->GetClass() == USpawnPoint::StaticClass())) continue;
 
 		AActor* SpawnedActor = Cast<USpawnPoint>(Child)->GetSpawnedActor();
-		
+
 		ASprungWheel* SprungWheel = Cast<ASprungWheel>(SpawnedActor);
 		if (SprungWheel == nullptr) continue;
 		Wheels.Add(SprungWheel);

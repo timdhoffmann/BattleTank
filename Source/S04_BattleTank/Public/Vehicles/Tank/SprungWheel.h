@@ -32,7 +32,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	// Adds a force to the wheel to drive.
-	void AddDrivingForce(float ForceMagnitude) const;
+	void AddDrivingForce(float ForceMagnitude);
 
 protected:
 	// Called when the game starts or when spawned
@@ -42,11 +42,19 @@ private:
 
 	void InitConstraints() const;
 
+	void ApplyForce() const;
+
+	// Dynamic delegate. Must be a UFUNCTION!
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
 #pragma endregion
 
 #pragma region Variables
 
 private:
+
+	float CurrentDrivingForceMagnitude = 0.f;
 
 	/// Components.
 
