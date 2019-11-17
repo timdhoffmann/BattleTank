@@ -1,15 +1,63 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "TankTrack.h"
+#include "Components/StaticMeshComponent.h"
+#include "Vehicles/Tank/SprungWheel.h"
+#include "Common/SpawnPoint.h"
+
+UTankTrack::UTankTrack()
+{
+	PrimaryComponentTick.bCanEverTick = false;
+}
+
+#pragma region Overrides
+
+void UTankTrack::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+#pragma endregion
+
+void UTankTrack::DriveTrack(float CurrentThrottle) const
+{
+	UE_LOG(LogTemp, Warning, TEXT("[%s] DriveTrack called"), *GetName());
+	
+	const float Force = MaxDrivingForce * CurrentThrottle;
+
+	const TArray<ASprungWheel*> Wheels = GetWheels();
+	const float ForcePerWheel = Force / Wheels.Num();
+
+	for (ASprungWheel* Wheel : Wheels)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[%s] adding force %f to wheel %s"), *GetName(), Force, *Wheel->GetName());
+		Wheel->AddDrivingForce(ForcePerWheel);
+	}
+
+}
 
 void UTankTrack::SetThrottle(const float Throttle) const
 {
-	// TODO: Clamp throttle value between -1 and 1.
+	const float ClampedThrottle = FMath::Clamp<float>(Throttle, -1.0f, 1.0f);
+	DriveTrack(ClampedThrottle);
+}
 
-	const auto Name = GetName();
+TArray<ASprungWheel*> UTankTrack::GetWheels() const
+{
+	TArray<ASprungWheel*> OUT Wheels;
 
-	const auto ForceApplied = GetForwardVector() * MaxDrivingForce * Throttle;
+	TArray<USceneComponent*> OUT ChildComponents;
+	GetChildrenComponents(true, ChildComponents);
+	for (auto& Child : ChildComponents)
+	{
+		// Checks that Child is a USpawnPoint.
+		if (!(Child->GetClass() == USpawnPoint::StaticClass())) continue;
 
-	auto TankRootComponent = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent());
-	TankRootComponent->AddForceAtLocation(ForceApplied, GetComponentLocation());
+		AActor* SpawnedActor = Cast<USpawnPoint>(Child)->GetSpawnedActor();
+
+		ASprungWheel* SprungWheel = Cast<ASprungWheel>(SpawnedActor);
+		if (SprungWheel == nullptr) continue;
+		Wheels.Add(SprungWheel);
+	}
+	return Wheels;
 }

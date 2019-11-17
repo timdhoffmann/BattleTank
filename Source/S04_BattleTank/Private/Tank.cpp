@@ -1,67 +1,48 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "Tank.h"
-#include "TankBarrel.h"
-#include "Engine/World.h"
-#include "TankAimingComponent.h"
-#include "TankNavMovementComponent.h"
-#include "Projectile.h"
+
+float ATank::GetHealthPercent() const
+{
+	return float(Health) / float(StartingHealth);
+}
 
 // Sets default values
 ATank::ATank()
 {
 	//Doesn't need to tick every frame.
 	PrimaryActorTick.bCanEverTick = false;
+}
 
-	// No need to protect pointers here, as they are added at construction.
-	TankAimingComponent = CreateDefaultSubobject<UTankAimingComponent>("AimingComponent");
+void ATank::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Health = StartingHealth;
 }
 
 #pragma region Overrides
 
-// Called when the game starts or when spawned
-void ATank::BeginPlay()
+float ATank::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
 {
-	Super::BeginPlay();
-}
-#pragma endregion
+	const int32 DamagePoints = FPlatformMath::RoundToInt(DamageAmount);
+	const int32 ActualDamage = FMath::Clamp<int32>(DamagePoints, 0.0f, Health);
 
-void ATank::SetBarrelReference(UTankBarrel* BarrelToSet)
-{
-	TankAimingComponent->SetBarrelReference(BarrelToSet);
-	Barrel = BarrelToSet;
-}
+	Health -= ActualDamage;
 
-void ATank::SetTurretReference(UTankTurret* TurretToSet) const
-{
-	TankAimingComponent->SetTurretReference(TurretToSet);
-}
+	UE_LOG(LogTemp, Warning, TEXT("Damage applied: %i. Remaining Health: %i."), ActualDamage, Health);
 
-// Called to bind functionality to input
-void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-void ATank::AimAt(const FVector TargetLocation) const
-{
-	TankAimingComponent->AimAt(TargetLocation, LaunchSpeed);
-}
-
-void ATank::Fire()
-{
-	bool bIsReloaded = (GetWorld()->GetTimeSeconds() - LastFireTime) > ReloadTimeSeconds;
-
-	if (ensure(Barrel != nullptr) && bIsReloaded)
+	// If the damage depletes our health set our lifespan to zero - which will destroy the actor
+	if (Health <= 0)
 	{
-		// Spawns a Projectile.
-		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
-			ProjectileBP,
-			Barrel->GetSocketLocation("ProjectileStart"),
-			Barrel->GetSocketRotation("ProjectileStart")
-			);
+		SetLifeSpan(0.001f);
 
-		Projectile->LaunchProjectile(LaunchSpeed);
-		LastFireTime = GetWorld()->GetTimeSeconds();
+		// Raises OnDeath event.
+		OnDied.Broadcast();
 	}
+
+	return ActualDamage;
 }
+
+#pragma endregion

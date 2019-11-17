@@ -1,10 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
 #include "TankTrack.generated.h"
+
+#pragma region Forward Declarations
+
+class ASprungWheel;
+
+#pragma endregion
 
 /**
  * Moves the tank.
@@ -20,7 +26,17 @@ public:
 
 	// Sets the throttle on a single track.
 	UFUNCTION(BlueprintCallable, Category = Input)
-		void SetThrottle(float Throttle) const;
+		void SetThrottle(const float Throttle) const;
+
+private:
+
+	UTankTrack();
+
+	virtual void BeginPlay() override;
+
+	void DriveTrack(float CurrentThrottle) const;
+
+	TArray<ASprungWheel*> GetWheels() const;
 
 #pragma endregion
 

@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "TankPlayerController.h"
 #include "Engine/World.h"
+#include "TankAimingComponent.h"
 #include "Tank.h"
 
 #pragma region Overrides
@@ -10,11 +11,10 @@ void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ControlledTank = GetControlledPawn();
-
-	if (ensureMsgf(ControlledTank != nullptr, TEXT("No controlled tank found.")))
+	AimingComponent = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	if (ensureMsgf(AimingComponent != nullptr, TEXT("No aiming component found.")))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[%s] found controlled pawn: %s"), *(GetName()), *(ControlledTank->GetName()));
+		FoundAimingComponent(AimingComponent);
 	}
 }
 
@@ -25,26 +25,37 @@ void ATankPlayerController::Tick(const float DeltaSeconds)
 
 	AimAtCrosshair();
 }
+
+void ATankPlayerController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	if (InPawn == nullptr)
+	{
+		return;
+	}
+
+	auto PossessedTank = Cast<ATank>(InPawn);
+
+	if (!ensure(PossessedTank != nullptr))
+	{
+		return;
+	}
+
+	PossessedTank->OnDied.AddUniqueDynamic(this, &ATankPlayerController::OnPossessedTankDied);
+}
 #pragma endregion
 
 void ATankPlayerController::AimAtCrosshair() const
 {
-	ensure(ControlledTank);
-
 	auto HitLocation = FVector(0.0f); // Out parameter.
 	if (GetCrosshairHitLocation(HitLocation))
 	{
-		ControlledTank->AimAt(HitLocation);
-		// TODO: If it hits the landscape...
-		// Tell controlled tank to aim at this point.
+		AimingComponent->AimAt(HitLocation);
 	}
 }
 
 #pragma region Getters
-ATank* ATankPlayerController::GetControlledPawn() const
-{
-	return Cast<ATank>(GetPawn());
-}
 
 // Get world location from line trace through crosshair.
 bool ATankPlayerController::GetCrosshairHitLocation(FVector& OutHitLocation) const
@@ -70,20 +81,16 @@ bool ATankPlayerController::GetAimDirectionThroughCrosshair(FVector& OutAimDirec
 	GetViewportSize(ViewportSizeX, ViewportSizeY);
 
 	// Calculates CrosshairScreenPosition in pixel coordinates.
-	const auto CrosshairScreenPosition = FVector
-	(
-		ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation, 0.0f
-	);
+	const auto CrosshairScreenPosition = FVector(
+		ViewportSizeX * CrosshairXLocation, ViewportSizeY * CrosshairYLocation, 0.0f);
 
 	// De-projects screen position to world coordinates.
 	auto CrosshairWorldLocation = FVector(0.0f);
-	return DeprojectScreenPositionToWorld
-	(
+	return DeprojectScreenPositionToWorld(
 		CrosshairScreenPosition.X,
 		CrosshairScreenPosition.Y,
 		CrosshairWorldLocation,
-		OutAimDirectionUnitVector
-	);
+		OutAimDirectionUnitVector);
 }
 
 bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, const FVector LineTraceDirection) const
@@ -101,9 +108,7 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 
 	/// Execute LineTrace (Ray-cast).
 	if (GetWorld()->LineTraceSingleByChannel(
-		HitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters
-	)
-		)
+		HitResult, LineTraceStart, LineTraceEnd, ObjectTypesLookedFor, AdditionalTraceParameters))
 	{
 		OutHitLocation = HitResult.ImpactPoint;
 
@@ -111,4 +116,17 @@ bool ATankPlayerController::GetAimDirectionHitLocation(FVector& OutHitLocation, 
 	}
 	return false;
 }
+
+#pragma endregion
+
+#pragma region Delegate & Event Subsribers
+
+void ATankPlayerController::OnPossessedTankDied()
+{
+	// Enables spectator mode.
+	StartSpectatingOnly();
+	
+	UE_LOG(LogTemp, Warning, TEXT("Player died!"));
+}
+
 #pragma endregion

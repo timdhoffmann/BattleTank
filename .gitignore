@@ -14,7 +14,7 @@
 ######################
 
 .vscode
-
+*.code-workspace
 
 #################
 # Unreal Engine #
@@ -29,6 +29,9 @@
 *.sdf
 *.VC.db
 *.VC.opendb
+
+# User-specific Settings
+Config/DefaultEditorPerProjectUserSettings.ini
 
 # Precompiled Assets
 SourceArt/**/*.png
@@ -102,4 +105,4 @@ DerivedDataCache/*
 # Custom #
 ##########
 
-Content/StarterContent/
+

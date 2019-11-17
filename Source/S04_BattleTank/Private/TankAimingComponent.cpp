@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Tim Hoffmann (@timdhoffmann).
 
 #include "TankAimingComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Projectile.h"
 #include "TankBarrel.h"
 #include "TankTurret.h"
 
@@ -11,30 +12,77 @@ UTankAimingComponent::UTankAimingComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 
-	PrimaryComponentTick.bCanEverTick = false;
-
-	// ...
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
+#pragma region Overrides
+
+void UTankAimingComponent::BeginPlay()
 {
-	Barrel = BarrelToSet;
-	ensureMsgf(Barrel != nullptr, TEXT("Barrel reference not found."));
+	Super::BeginPlay();
+
+	// Prevents firing before an initial reload.
+	LastFireTime = GetWorld()->GetTimeSeconds();
+
+	Ammo = StartingAmmo;
+
+	ensureMsgf(ProjectileBP != nullptr, TEXT("Assign a ProjectileBP in the editor."));
 }
 
-void UTankAimingComponent::SetTurretReference(UTankTurret* TurretToSet)
+void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
 {
-	Turret = TurretToSet;
-	ensureMsgf(Turret != nullptr, TEXT("Turret reference not found."));
+	// Checks if is ready to fire.
+	if (Ammo <= 0)
+	{
+		AimState = EAimState::NoAmmo;
+	}
+	else if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeSeconds)
+	{
+		AimState = EAimState::Reloading;
+	}
+	else if (IsBarrelMoving())
+	{
+		AimState = EAimState::Aiming;
+	}
+	else
+	{
+		AimState = EAimState::Locked;
+	}
 }
 
-void UTankAimingComponent::AimAt(const FVector TargetLocation, const float LaunchSpeed) const
-{
-	ensureMsgf(Barrel != nullptr, TEXT("Barrel is nullptr."));
+#pragma endregion
 
+bool UTankAimingComponent::IsBarrelMoving() const
+{
+	if (!ensure(Barrel != nullptr))
+	{
+		return false;
+	}
+	// TODO: BUG! Normalization seems to be unreliable in development build! Using Rotators instead. Needs refinement!
+	const FRotator AimBarrelDeltaRotator = Barrel->GetForwardVector().Rotation() - AimDirectionNormal.Rotation();
+	return !(AimBarrelDeltaRotator.IsNearlyZero(0.1f));
+}
+
+void UTankAimingComponent::InitReferences(UTankBarrel* BarrelReference, UTankTurret* TurretReference)
+{
+	if (ensureMsgf(BarrelReference != nullptr, TEXT("Barrel reference not found.")))
+	{
+		Barrel = BarrelReference;
+	}
+
+	if (ensureMsgf(TurretReference != nullptr, TEXT("Turret reference not found.")))
+	{
+		Turret = TurretReference;
+	}
+}
+
+void UTankAimingComponent::AimAt(const FVector TargetLocation)
+{
+	ensure(Barrel != nullptr);
 	/// Set up of arguments for SuggestProjectileVelocity().
 	// Initializes OutLaunchVelocity to 0.
-	FVector OutLaunchVelocity(0);
+	FVector TossVelocity(0);
 	const FVector StartLocation = Barrel->GetSocketLocation("ProjectileStart");
 	const auto ActorsToIgnore = TArray<AActor*>();
 	const auto bDrawDebug = false;
@@ -43,7 +91,7 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 	const bool bHasProjectileVelocity = UGameplayStatics::SuggestProjectileVelocity
 	(
 		this,
-		OutLaunchVelocity,
+		TossVelocity,
 		StartLocation,
 		TargetLocation,
 		LaunchSpeed,
@@ -58,28 +106,68 @@ void UTankAimingComponent::AimAt(const FVector TargetLocation, const float Launc
 
 	if (bHasProjectileVelocity)
 	{
+		// TODO: BUG! GetSafeNormal() seems to be unreliable in development build!
 		// Stores normalized version of the suggested LaunchVelocity.
-		auto const AimDirection = OutLaunchVelocity.GetSafeNormal();
+		//AimDirectionNormal = TossVelocity.GetSafeNormal();
+		AimDirectionNormal = TossVelocity.GetClampedToMaxSize(1.0f);
+		//UE_LOG(LogTemp, Warning, TEXT("AimDirectionNormal is normalized: %i"), AimDirectionNormal.IsNormalized());
 
 		const auto ParentActorName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirection.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("[%s] Aiming from BarrelLocation: %s to TargetLocation: %s. SuggestedLaunchVelocity: %s"), *ParentActorName, *StartLocation.ToString(), *TargetLocation.ToString(), *AimDirectionNormal.ToString());
 
-		RotateTurretAndBarrelTowards(AimDirection);
+		RotateTurretAndBarrelTowards(AimDirectionNormal.Rotation());
 	}
 }
 
-void UTankAimingComponent::RotateTurretAndBarrelTowards(FVector Direction) const
+void UTankAimingComponent::Fire()
 {
-	/// Rotates the barrel (pitch).
+	if (AimState == EAimState::Aiming || AimState == EAimState::Locked)
+	{
+		// Spawns a Projectile.
+		auto Projectile = GetWorld()->SpawnActor<AProjectile>(
+			ProjectileBP,
+			Barrel->GetSocketLocation("ProjectileStart"),
+			Barrel->GetSocketRotation("ProjectileStart")
+			);
+
+		Projectile->LaunchProjectile(LaunchSpeed);
+		LastFireTime = GetWorld()->GetTimeSeconds();
+		Ammo--;
+	}
+}
+
+EAimState UTankAimingComponent::GetAimState() const
+{
+	return AimState;
+}
+
+int32 UTankAimingComponent::GetRemainingAmmo() const
+{
+	return Ammo;
+}
+
+void UTankAimingComponent::RotateTurretAndBarrelTowards(FRotator TargetRotation) const
+{
+	if (!ensure(Barrel != nullptr))
+	{
+		return;
+	}
+	// Rotates the barrel (pitch).
 	// Uses barrel for pitch rotation.
 	const auto BarrelRotator = Barrel->GetForwardVector().Rotation();
-	const auto DeltaRotator = Direction.Rotation() - BarrelRotator;
+	const auto DeltaRotator = TargetRotation - BarrelRotator;
 
-	// Translates AimDirection into pitch.
+	// Translates AimDirectionNormal into pitch.
 	Barrel->RotatePitch(DeltaRotator.Pitch);
 
-	/// Rotates the Turret (yaw).
-	if (FMath::Abs(DeltaRotator.Yaw) < 180)
+	if (!ensure(Turret != nullptr))
+	{
+		return;
+	}
+	// TODO: The turret should always take the shortest direction relative to the crosshair.
+	//UE_LOG(LogTemp, Warning, TEXT("Abs DeltaRotator.Yaw: %f"), FMath::Abs<float>(DeltaRotator.Yaw));
+	/// Rotates the Turret (yaw), taking the shortest way.
+	if (FMath::Abs<float>(DeltaRotator.Yaw) < 180.0f)
 	{
 		Turret->RotateYaw(DeltaRotator.Yaw);
 	}
